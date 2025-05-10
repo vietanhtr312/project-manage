@@ -4,13 +4,7 @@ import axios from 'axios';
 function HomePage() {
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    axios.get('http://localhost:5000/')
-      .then(res => setMessage(res.data))
-      .catch(err => console.error(err));
-  }, []);
-
-  return <div>Home Page</div>;
+  return <div className="font-bold text-red-100 bg-gray-800">Home Page</div>;
 }
 
 export default HomePage;
