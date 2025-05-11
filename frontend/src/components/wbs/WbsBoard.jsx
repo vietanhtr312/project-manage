@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Minus } from 'lucide-react';
 
-export default function WBSBuilder() {
+export default function WBSBoard() {
     const [projectName, setProjectName] = useState("New Project");
     const [modules, setModules] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -177,8 +177,8 @@ export default function WBSBuilder() {
 
     return (
         <div className="flex flex-col h-full">
-            <div className="bg-gray-100 p-4 border-b flex flex-col items-center ml-[360px]">
-                <div className="text-xl font-bold border bg-white p-2 rounded w-64 text-center flex gap-4 justify-center">
+            <div className="bg-gray-100 p-4 border-b flex flex-col items-center ml-[380px] border-2 border-b-0 rounded-tl-lg rounded-tr-lg bg-yellow-50">
+                <div className="text-xl font-bold border bg-orange-200 p-2 rounded w-64 text-center flex gap-4 justify-center">
                     {projectName}
                     <button
                         className="bg-blue-500 text-white px-2 py-0 rounded shadow"
@@ -190,7 +190,7 @@ export default function WBSBuilder() {
             </div>
 
             <div className="flex flex-1 overflow-hidden">
-                <div className="w-[360px] bg-gray-100 p-4 border-r overflow-auto bg-white rounded">
+                <div className="w-[360px] bg-gray-100 p-4 border-r overflow-auto bg-white rounded h-[500px]">
                     <h2 className="text-xl font-bold mb-4">Details</h2>
                     {selectedItem ? (
                         <div className="space-y-4">
@@ -238,12 +238,12 @@ export default function WBSBuilder() {
                     )}
                 </div>
 
-                <div className="flex-1 p-6 overflow-auto">
+                <div className="flex-1 p-6 overflow-auto border-2 ml-[20px] border-t-0 rounded-tr-lg rounded-br-lg bg-yellow-50">
                     <div className="flex gap-6 justify-start items-start relative">
                         {modules.map((mod) => (
                             <div key={mod.id} className="relative w-60">
                                 <div
-                                    className="bg-white border rounded p-3 shadow text-center cursor-pointer hover:bg-gray-50 mb-4"
+                                    className="bg-green-100 border rounded p-3 shadow text-center cursor-pointer hover:bg-green-200 mb-4"
                                     onClick={() =>
                                         selectItem({ type: "module", moduleId: mod.id, name: mod.name })
                                     }
@@ -256,7 +256,7 @@ export default function WBSBuilder() {
                                         {mod.tasks.map((task) => (
                                             <div
                                                 key={task.id}
-                                                className="bg-gray-100 p-2 pl-0 rounded cursor-pointer hover:bg-gray-200 flex items-center"
+                                                className="bg-gray-100 p-2 pl-0 rounded cursor-pointer hover:bg-gray-200 flex items-center text-sx"
                                                 onClick={() =>
                                                     selectItem({
                                                         type: "task",
@@ -273,7 +273,7 @@ export default function WBSBuilder() {
                                 )}
 
                                 {mod.submodules.length > 0 && (
-                                    <div className="ml-4 border-l-2 border-blue-400 space-y-2">
+                                    <div className="ml-4 border-l-2 border-blue-400 space-y-2 text-sx">
                                         {mod.submodules.map((sub) => (
                                             <div key={sub.id} className="relative">
                                                 <div

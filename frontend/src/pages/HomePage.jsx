@@ -6,7 +6,7 @@ function HomePage() {
   const [message, setMessage] = useState("");
 
   return <>
-    <div className='mt-16 ml-[250px] p-6'>
+    <div className=''>
       <ProjectFolder />
     </div></>;
 }

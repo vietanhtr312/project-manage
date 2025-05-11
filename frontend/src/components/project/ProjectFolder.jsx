@@ -43,8 +43,8 @@ const ProjectFolder = ({ onClick }) => {
     );
 
     return (
-        <div className="h-screen w-[75%] bg-gray-100 p-6">
-            <div className="w-100 flex flex-row flex-wrap items-center mb-4 gap-8">
+        <div className="h-screen w-[75%] bg-gray-100 p-20 pr-0">
+            <div className="w-100 flex flex-row flex-wrap items-center mb-4 gap-10">
                 <ProjectCard />
                 <ProjectCard />
                 <ProjectCard />
@@ -52,22 +52,32 @@ const ProjectFolder = ({ onClick }) => {
                 <AddNewProjectCard />
             </div>
 
-            <div className="fixed right-0 top-[100px] bottom-32 w-80 bg-white rounded-2xl">
+            <div className="fixed right-10 top-[100px] bottom-32 w-80 z-10 bg-white rounded-2xl">
                 <h2 className="text-left mb-3 text-2xl font-bold mt-10 ml-8">Details</h2>
-                <div className={`ml-8 mr-4 mb-4 ${showDetails ? "block" : "hidden"}`}>
-                    <h3 className="text-left my-2 text-lg font-bold">{project.title}</h3>
-                    <p className="text-left my-2 text-gray-500">{project.description}</p>
-                    <p className="text-left my-2 text-gray-500"><span className="font-semibold">Start At:</span> {project.createdAt}</p>
-                    <p className="text-left my-2 text-gray-500"><span className="font-semibold">Due date:</span> {project.updatedAt}</p>
-                    <p className="text-left my-2 text-gray-500"><span className="font-semibold">Owner:</span> {project.owner}</p>
-                    <p className="text-left my-2 text-gray-500"><span className="font-semibold">Members:</span> {project.members.join(", ")}</p>
-                    <p className="text-left my-2 text-gray-500"><span className="font-semibold">Tasks:</span> {project.tasks.join(", ")}</p>
-                    <p className="text-left my-2 text-gray-500"><span className="font-semibold">Priority:</span> {project.priority}</p>
-                    <div className="mt-10 flex flex-row gap-10">
-                        <button className="text-black py-2 px-4 rounded-lg bg-yellow-100 hover:bg-yellow-500 hover:text-white">Update</button>
-                        <button className="text-black py-2 px-4 rounded-lg bg-red-100 hover:bg-red-500 hover:text-white">Delete</button>
-                    </div>
-                </div>
+                {
+                    !showDetails ? (
+                        <div className="text-left my-2 text-gray-500 ml-8">
+                            Select a project to view details
+                        </div>
+                    ) :
+                        (
+                            <div className={`ml-8 mr-4 mb-4`}>
+                                <h3 className="text-left my-2 text-lg font-bold">{project.title}</h3>
+                                <p className="text-left my-2 text-gray-500">{project.description}</p>
+                                <p className="text-left my-2 text-gray-500"><span className="font-semibold">Start At:</span> {project.createdAt}</p>
+                                <p className="text-left my-2 text-gray-500"><span className="font-semibold">Due date:</span> {project.updatedAt}</p>
+                                <p className="text-left my-2 text-gray-500"><span className="font-semibold">Owner:</span> {project.owner}</p>
+                                <p className="text-left my-2 text-gray-500"><span className="font-semibold">Members:</span> {project.members.join(", ")}</p>
+                                <p className="text-left my-2 text-gray-500"><span className="font-semibold">Tasks:</span> {project.tasks.join(", ")}</p>
+                                <p className="text-left my-2 text-gray-500"><span className="font-semibold">Priority:</span> {project.priority}</p>
+                                <div className="mt-10 flex flex-row gap-10">
+                                    <button className="text-black py-2 px-4 rounded-lg bg-yellow-100 hover:bg-yellow-500 hover:text-white">Update</button>
+                                    <button className="text-black py-2 px-4 rounded-lg bg-red-100 hover:bg-red-500 hover:text-white">Delete</button>
+                                </div>
+                            </div>
+                        )
+                }
+
             </div>
         </div>
     );
