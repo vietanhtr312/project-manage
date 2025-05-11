@@ -4,12 +4,12 @@ import { NavLink, Outlet } from "react-router-dom";
 export const ProjectManagerLayout = () => {
   const tabs = [
     { label: "WBS", path: "/wbs" },
-    { label: "Kanban", path: "/kanban" },
+    { label: "Kanban", path: "/kaban" },
   ];
 
   return (
     <div>
-      <div className="flex space-x-4 border-b border-gray-200 px-6 py-3 bg-white z-100">
+      <div className="flex space-x-4 border-b p-2 bg-white m-3 rounded-xl">
         {tabs.map((tab) => (
           <NavLink
             key={tab.path}

@@ -12,11 +12,7 @@ const Header = ({ display, setDisplay }) => {
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
   const handleClickOutside = (event) => {
-    if (
-      showDropdown &&
-      !event.target.closest(".dropdown") &&
-      !event.target.closest(".user-dropdown-trigger")
-    ) {
+    if (showDropdown && !event.target.closest(".dropdown")) {
       setShowDropdown(false);
     }
   };
