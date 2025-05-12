@@ -17,13 +17,13 @@ const authValidator = {
 
             // Check missing fields
             if (!name) {
-                throw new MissingFieldError('Missing \"name\" field');
+                throw new MissingFieldError('Missing "name" field');
             }
             if (!email) {
-                throw new MissingFieldError('Missing \"email\" field');
+                throw new MissingFieldError('Missing "email" field');
             }
             if (!password) {
-                throw new MissingFieldError('Missing \"password\" field');
+                throw new MissingFieldError('Missing "password" field');
             }
             // Validate email format
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,10 +61,10 @@ const authValidator = {
 
             // Check if all fields are provided
             if (!email) {
-                throw new MissingFieldError('Missing \"email\" field');
+                throw new MissingFieldError('Missing "email" field');
             }
             if (!password) {
-                throw new MissingFieldError('Missing \"password\" field');
+                throw new MissingFieldError('Missing "password" field');
             }
 
             // Validate email format

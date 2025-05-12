@@ -3,7 +3,8 @@ const cors = require("cors");
 const connectDB = require('./config/db')
 const dotenv = require('dotenv');
 dotenv.config();
-const authRoutes = require('./routes/authRoutes')
+const authRoutes = require('./routes/authRoutes');
+const errorHandler = require("./middlewares/errorHandler");
 const app = express();
 
 //Middlewares
@@ -24,6 +25,9 @@ app.get("/", (req, res) => {
 //Routes
 app.use('/api/v1/auth', authRoutes)
 
+
+//Error Handling
+app.use(errorHandler)
 const start = async () => {
     try {
         await connectDB(process.env.MONGO_URI);
@@ -35,6 +39,7 @@ const start = async () => {
         console.error('Failed to start the server:', error);
     }
 };
+
 
 start()
 
