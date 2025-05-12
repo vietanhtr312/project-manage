@@ -1,7 +1,6 @@
 const InvalidLengthError = require('../errors/InvalidLengthError');
 const InvalidFormatError = require('../errors/InvalidFormatError');
 const MissingFieldError = require('../errors/MissingFieldError');
-const AppError = require('../utils/AppError');
 
 
 

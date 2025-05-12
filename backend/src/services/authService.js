@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const jwtUtils = require('../utils/jwtUtils')
-const passwordUtils = require('..utils/passwordUtils');
+const passwordUtils = require('../utils/passwordUtils');
 const UserAlreadyExistsError = require('../errors/UserAlreadyExistsError');
 const InvalidCredentialsError = require('../errors/InvalidCredentialsError');
 
@@ -21,7 +21,7 @@ const authService = {
         if (existingName) {
             throw new UserAlreadyExistsError('This name has been used')
         }
-        const password_hash = await passwordUtils.hashaPassword(password);
+        const password_hash = await passwordUtils.hashPassword(password);
 
         const newUser = new User({
             name, 
@@ -62,3 +62,5 @@ const authService = {
         }
     }
 };
+
+module.exports= authService;
