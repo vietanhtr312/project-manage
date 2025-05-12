@@ -1,20 +1,40 @@
 const express = require("express");
 const cors = require("cors");
+const connectDB = require('./config/db')
 const dotenv = require('dotenv');
-require("dotenv").config();
+dotenv.config();
+
 const app = express();
 
-app.use(cors());
+//Middlewares
+app.use(cors({
+    origin: process.env.ALLOWED_ORIGINS || '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
+//Test
+app.get("/", (req, res) => { 
+    res.send("Hello")
+});
+
+
+//Routes
+
+
+const start = async () => {
+    try {
+        await connectDB(process.env.MONGO_URI);
+        const port = process.env.PORT;
+        app.listen(port, ()=>{
+            console.log(`Server is running on port ${port}`);
+        })
+    } catch(error) {
+        console.error('Failed to start the server:', error);
+    }
+};
+
+start()
+
 module.exports = app;
-
-const mongoose = require("mongoose");
-dotenv.config();
-const queryString = process.env.MONGODB_URI || "mongodb+srv://hoangviet232003:sPly3jM7MVfga6fE@cluster0.5koqu2i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
-mongoose.connect(queryString, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log('MongoDB connected!'))
-    .catch(err => console.log('MongoDB connection error:', err.message));

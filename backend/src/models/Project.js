@@ -1,11 +1,30 @@
 const mongoose = require('mongoose');
 
 const ProjectSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: { type: String },
-  start_date: { type: Date },
-  end_date: { type: Date },
-  status: { type: String, enum: ['active', 'completed', 'paused'], default: 'active' }
-});
+  leader: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', 
+    required: true
+  },
+  title: {
+    type: String,
+    required: true,
+    maxlength: 50
+  },
+  description: {
+    type: String,
+    required: true,
+    maxlength: 50
+  },
+  start_date: {
+    type: Date,
+    required: true
+  },
+  due_date: {
+    type: Date,
+    required: true
+  }
+}, { timestamps: true });
+
 
 module.exports = mongoose.model('Project', ProjectSchema);
