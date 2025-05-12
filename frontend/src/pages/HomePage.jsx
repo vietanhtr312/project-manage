@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import ProjectFolder from "../components/project/ProjectFolder";
 
 function HomePage() {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    axios.get('http://localhost:5000/')
-      .then(res => setMessage(res.data))
-      .catch(err => console.error(err));
-  }, []);
-
-  return <div>Home Page</div>;
+  return <>
+    <div className=''>
+      <ProjectFolder />
+    </div></>;
 }
 
 export default HomePage;
