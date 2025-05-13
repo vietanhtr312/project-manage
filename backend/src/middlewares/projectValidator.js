@@ -5,7 +5,7 @@ const MissingFieldError = require("../errors/MissingFieldError");
 const ResourceNotFoundError = require("../errors/ResourceNotFoundError");
 const userService = require("../services/userService");
 
-const projectCreationValidator = {
+const projectValidator = {
     validate: async(req, res, next) => {
         try {
             
@@ -53,4 +53,4 @@ const projectCreationValidator = {
     }
 };
 
-module.exports = projectCreationValidator;
+module.exports = projectValidator;

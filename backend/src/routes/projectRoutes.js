@@ -1,12 +1,12 @@
 const router = require('express').Router();
 const authMiddleware = require('../middlewares/authMiddleware');
-const projectCreationValidator = require('../middlewares/projectCreationValidator');
+const projectValidator = require('../middlewares/projectValidator');
 const projectController = require('../controllers/projectController');
 
 router.use(authMiddleware)
 router.get('/:id', projectController.getProjectById);
-router.post('/', projectCreationValidator.validate, projectController.createProject);
-// router.put(':id');
+router.post('/', projectValidator.validate, projectController.createProject);
+router.put('/:id', projectValidator.validate, projectController.updateProject);
 // router.delete('/:id')
 
 // router.get('/:id/members')

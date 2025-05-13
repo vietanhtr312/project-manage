@@ -1,3 +1,4 @@
+const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 const Project = require('../models/Project');
 const ProjectMember = require('../models/ProjectMember');
 
@@ -40,7 +41,14 @@ const projectService = {
         }
         await ProjectMember.insertMany(memberDocs);  
         return newProject;
+    },
+    updateProject: async (id, title, description, start_date, due_date) => {
+        const updatedProject = Project.findByIdAndUpdate (
+            id,
+            {$set : {title, description, start_date, due_date}},
+            {new: true, runValidators: true});
+        if (!updatedProject) throw new ResourceNotFoundError("Project not found");
+        return updatedProject;
     }
-
 };
 module.exports = projectService;

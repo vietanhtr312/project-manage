@@ -30,6 +30,19 @@ const projectController = {
         } catch (error) {
             next(error)
         }
+    },
+    updateProject: async(req, res, next) => {
+        const {id} = req.params;
+        const {title, description, start_date, due_date} = req.body;
+        const updatedProject = await projectService.updateProject(id, title, description, start_date, due_date);
+        return res.status(200).json({
+            success: true, 
+            message: 'Updated Successfully',
+            data: {
+                id: updatedProject.id
+            }
+        }
+        )
     }
 }
 
