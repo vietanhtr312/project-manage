@@ -4,7 +4,7 @@ const projectCreationValidator = require('../middlewares/projectCreationValidato
 const projectController = require('../controllers/projectController');
 
 router.use(authMiddleware)
-router.get(':id/', projectController.getProjectById);
+router.get('/:id', projectController.getProjectById);
 router.post('/', projectCreationValidator.validate, projectController.createProject);
 // router.put(':id');
 // router.delete('/:id')

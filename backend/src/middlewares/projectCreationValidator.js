@@ -14,13 +14,19 @@ const projectCreationValidator = {
             if (!user) {
                 throw new ResourceNotFoundError("User not found");
             }
-            const {title, start_date, due_date, members = []} = req.body;
+            const {title, description, start_date, due_date, members = []} = req.body;
             //validate title
             if (!title) {
                 throw new MissingFieldError("Missing project's title");
             }
             if (title.length > 50) {
                 throw new InvalidLengthError("Title must be less than 50 characters")
+            }
+
+            //validate description
+
+            if (!description) {
+                throw new MissingFieldError("Missing project's description");
             }
 
             // validate date
