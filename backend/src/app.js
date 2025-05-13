@@ -4,6 +4,7 @@ const connectDB = require('./config/db')
 const dotenv = require('dotenv');
 dotenv.config();
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 const errorHandler = require("./middlewares/errorHandler");
 const app = express();
 
@@ -23,9 +24,8 @@ app.get("/", (req, res) => {
 
 
 //Routes
-app.use('/api/v1/auth', authRoutes)
-
-
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
 //Error Handling
 app.use(errorHandler)
 const start = async () => {

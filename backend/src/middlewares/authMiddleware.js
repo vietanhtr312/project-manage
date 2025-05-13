@@ -1,6 +1,6 @@
 const InvalidCredentialsError = require("../errors/InvalidCredentialsError");
 const jwtUtils = require("../utils/jwtUtils");
-
+const User = require('../models/User')
 
 // Middleware to protect routes that require authentication 
 const authMiddleware = async (req, res, next) => {
@@ -27,3 +27,5 @@ const authMiddleware = async (req, res, next) => {
         next(error);
     }
 };
+
+module.exports = authMiddleware;
