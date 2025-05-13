@@ -1,4 +1,5 @@
-const projectService = require('../services/projectService')
+const projectService = require('../services/projectService');
+const projectMemberService = require('../services/projectMemberService');
 
 const projectController = {
     getProjectById: async (req, res, next) => {
@@ -50,7 +51,7 @@ const projectController = {
     getMembers: async (req, res, next) => {
         try {
             const {id} = req.params;
-            const membersList = await projectService.getMembers(id);
+            const membersList = await projectMemberService.getProjectMembers(id);
             return res.status(200).json({
                 success: true,
                 message: "Data fetched successfully",
@@ -60,7 +61,39 @@ const projectController = {
             next(error);
         }
 
-    }
+    },
+
+    addMember: async(req, res, next) => {
+        try {
+            const {id} = req.params;
+            const {userId} = req.body;
+            const projectMember = await projectMemberService.addProjectMember(id, userId);
+            return res.status(201).json({
+                success: true, 
+                message: "Added successfully",
+                data: {
+                    id: projectMember.id}
+            })
+        } catch (error) {
+            next(error);
+        }
+    },
+    removeMember: async(req, res, next) => {
+        try {
+            const {id} = req.params;
+            const {userId} = req.body;
+            const result = await projectMemberService.removeProjectMember(id, userId);
+            if (result.deletedCount > 0) 
+                return res.status(200).json({
+                    success: true, 
+                    message: "Removed successfully",
+                    data: null
+                })
+        } catch (error) {
+            next(error);
+        }
+    },
+
 }
 
 module.exports = projectController;
