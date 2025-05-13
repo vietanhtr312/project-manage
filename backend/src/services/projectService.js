@@ -6,7 +6,7 @@ const projectService = {
     getProjectById: async (projectId) => {
         const project = await Project.findById(projectId).populate('leader');
         if (!project) {
-            throw new ResourceNotFound("Project not found");
+            throw new ResourceNotFoundError("Project not found");
         }
         return project;
     },
@@ -49,6 +49,18 @@ const projectService = {
             {new: true, runValidators: true});
         if (!updatedProject) throw new ResourceNotFoundError("Project not found");
         return updatedProject;
+    },
+    getMembers: async (id) => {
+        const projectMembers = await ProjectMember.find({project : id}).populate("member", "name email"). select('member role');
+        if (!projectMembers) throw new ResourceNotFoundError("This project doesnt have members");
+        const members = projectMembers.map((pm, index) => ({
+            index: index + 1,
+            ...pm.member.toObject(), 
+        role: pm.role}))
+        return {
+            count: members.length, 
+            members: members
+        }
     }
 };
 module.exports = projectService;
