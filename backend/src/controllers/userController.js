@@ -47,7 +47,8 @@ const userController = {
 
             res.status(200).json({
                 success: true,
-                message: 'Password updated successfully'
+                message: 'Password updated successfully',
+                data: null
             });
         } catch (error) {
             next(error)
@@ -60,7 +61,8 @@ const userController = {
             await userService.deleteUser(userId, password);
             res.status(200).json({
                 success: true, 
-                message: "Account deleted successfully"
+                message: "Account deleted successfully",
+                data: null
             })
         } catch (error) {
             next(error);
