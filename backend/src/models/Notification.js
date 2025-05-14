@@ -13,6 +13,14 @@ const NotificationSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true
+  },
+  isRead: {
+    type: Boolean,
+    default: false
+  },
+  url: {
+    type: String,
+    default: null
   }
 }, { timestamps: true });
 
