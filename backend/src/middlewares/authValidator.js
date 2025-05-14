@@ -28,22 +28,22 @@ const authValidator = {
             // Validate email format
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-                throw new InvalidFormatError('Invalid email', 400);
+                throw new InvalidFormatError('Invalid email');
             }
 
             // Validate name length
             if (name.length > 50) {
-                throw new InvalidLengthError('Name must be less than 50 characters', 400);
+                throw new InvalidLengthError('Name must be less than 50 characters');
             }
 
             // Validate email length
             if (email.length > 50) {
-                throw new InvalidLengthError('Email must be less than 50 characters', 400);
+                throw new InvalidLengthError('Email must be less than 50 characters');
             }
 
             // Validate password strength (at least 6 characters)
             if (password.length < 6) {
-                throw new InvalidLengthError('Password must be at least 6 characters', 400);
+                throw new InvalidLengthError('Password must be at least 6 characters');
             }
 
             next();

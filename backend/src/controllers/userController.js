@@ -8,7 +8,7 @@ const userController = {
                     success: true, 
                     message: "Data fetched successfully",
                     data: {
-                        id: req.user.id, 
+                        _id: req.user.id, 
                         name: req.user.name, 
                         email: req.user.email, 
                     }
@@ -27,7 +27,7 @@ const userController = {
                 success:true,
                 message: "Update successfully",
                 data: {
-                    id: updatedUser.id,
+                    id: updatedUser._id,
                     name: updatedUser.name,
                     email: updatedUser.email,
                 }
@@ -47,7 +47,8 @@ const userController = {
 
             res.status(200).json({
                 success: true,
-                message: 'Password updated successfully'
+                message: 'Password updated successfully',
+                data: null
             });
         } catch (error) {
             next(error)
@@ -60,7 +61,8 @@ const userController = {
             await userService.deleteUser(userId, password);
             res.status(200).json({
                 success: true, 
-                message: "Account deleted successfully"
+                message: "Account deleted successfully",
+                data: null
             })
         } catch (error) {
             next(error);
@@ -74,8 +76,8 @@ const userController = {
                 success: true, 
                 message: "Data fetched successfully",
                 data: {
-                    id: user.id,
-                    name: user.name, 
+                    _id: user.id,
+                    name: user.name,
                     email: user.email
                 }
             })

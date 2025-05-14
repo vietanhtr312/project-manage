@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const projectRoutes = require('./routes/projectRoutes');
 const errorHandler = require("./middlewares/errorHandler");
 const app = express();
 
@@ -31,6 +32,7 @@ app.use('/api', taskRoutes);
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/projects', projectRoutes);
 //Error Handling
 app.use(errorHandler)
 const start = async () => {
