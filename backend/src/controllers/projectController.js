@@ -85,8 +85,7 @@ const projectController = {
     },
     removeMember: async (req, res, next) => {
         try {
-            const { id } = req.params;
-            const { userId } = req.body;
+            const { id, userId } = req.params;
             const result = await projectMemberService.removeProjectMember(id, userId);
             if (result.deletedCount > 0)
                 return res.status(200).json({
