@@ -32,7 +32,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/projects', projectRoutes);
 app.use('/api', taskRoutes);
-app.use('/api/v1/notifications', notificationRoutes)
+app.use('/api/v1/notifications', notificationRoutes);
 //Error Handling
 app.use(errorHandler)
 const start = async () => {

@@ -11,17 +11,14 @@ const AppError = require('../errors/AppError')
 function errorHandler(err, req, res, next) {
     console.log('Error: ', err);
 
-    if (err instanceof AppError) {
-        return res.status(err.statusCode).json({
-            success: false,
-            message: err.message,
-            data: null
-        });
-    }
-    return res.status(500).json({
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Something went wrong on the server';
+    return res.status(statusCode).json({
         success: false,
-        message: 'Something went wrong on the server'
+        message: message,
+        data: null
     });
+    
 }
 
 module.exports = errorHandler;
