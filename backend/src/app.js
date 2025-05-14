@@ -21,7 +21,9 @@ app.get("/", (req, res) => {
 
 
 //Routes
+const taskRoutes = require('./routes/taskRoutes');
 
+app.use('/api', taskRoutes);
 
 const start = async () => {
     try {
