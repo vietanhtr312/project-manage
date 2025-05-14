@@ -27,12 +27,10 @@ app.get("/", (req, res) => {
 
 
 //Routes
-app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/projects', projectRoutes);
-app.use('/api', taskRoutes);
-app.use('/api/v1/notifications', notificationRoutes)
+app.use('/api/v1/projects', require('./routes/projectRoutes'));
+app.use('/api/v1/tasks', require('./routes/taskRoutes'));
 //Error Handling
 app.use(errorHandler)
 const start = async () => {
