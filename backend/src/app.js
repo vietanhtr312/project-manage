@@ -6,6 +6,7 @@ dotenv.config();
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const projectRoutes = require('./routes/projectRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 const errorHandler = require("./middlewares/errorHandler");
 const app = express();
 
@@ -26,13 +27,10 @@ app.get("/", (req, res) => {
 
 //Routes
 app.use('/api/v1/auth', authRoutes)
-const taskRoutes = require('./routes/taskRoutes');
-
-app.use('/api', taskRoutes);
-
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/projects', projectRoutes);
+app.use('/api', taskRoutes);
 //Error Handling
 app.use(errorHandler)
 const start = async () => {
