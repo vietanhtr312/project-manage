@@ -21,12 +21,13 @@ const projectMemberService = {
         }
 
         // Check if the member is already in the project
-        const existingMember = await ProjectMember.findOne({
+        const membership = await ProjectMember.findOne({
             project: projectId,
             member: userId
         });
 
-        if (existingMember) {
+        if (membership) {
+            console.log(membership)
             throw new UserAlreadyExistsError('User is already a member of this project');
         }
 
@@ -56,7 +57,7 @@ const projectMemberService = {
             throw new ResourceNotFoundError("The user is not in this project");
         }
         
-        const result = projectMembers.deleteOne({project: projectId, member: userId});
+        const result = await membership.deleteOne({project: projectId, member: userId});
         return result;
     },
 
@@ -81,6 +82,7 @@ const projectMemberService = {
         if (!projectMember) return false;
         return (projectMember.role === 'leader');
     },
+
     isMember: async(projectId, userId) => {
         const projectMember = await ProjectMember.find({
             project: projectId,
@@ -88,6 +90,18 @@ const projectMemberService = {
         });
         if (!projectMember) return false;
         return true;
+    },
+
+    getLedProjects: async(userId) => {
+        const projects = await ProjectMember.find({member: userId, role: "leader"}).populate("project", "title").select('project');
+        console.log(projects)
+        if (!projects || projects.length === 0) throw new ResourceNotFoundError("Project not found");
+        return projects;
+    },
+    getParticipatedProjects:async(userId) => {
+        const projects = await ProjectMember.find({member: userId, role: "member"}).populate("project", "title").select('project');
+        if (!projects || projects.length === 0) throw new ResourceNotFoundError("Project not found");
+        return projects;
     }
 }
 

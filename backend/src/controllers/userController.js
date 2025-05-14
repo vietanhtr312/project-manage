@@ -8,7 +8,7 @@ const userController = {
                     success: true, 
                     message: "Data fetched successfully",
                     data: {
-                        id: req.user.id, 
+                        _id: req.user.id, 
                         name: req.user.name, 
                         email: req.user.email, 
                     }
@@ -27,7 +27,7 @@ const userController = {
                 success:true,
                 message: "Update successfully",
                 data: {
-                    id: updatedUser.id,
+                    id: updatedUser._id,
                     name: updatedUser.name,
                     email: updatedUser.email,
                 }
@@ -76,8 +76,8 @@ const userController = {
                 success: true, 
                 message: "Data fetched successfully",
                 data: {
-                    id: user.id,
-                    name: user.name, 
+                    _id: user.id,
+                    name: user.name,
                     email: user.email
                 }
             })
