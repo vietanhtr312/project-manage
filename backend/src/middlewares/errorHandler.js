@@ -8,8 +8,9 @@ const AppError = require('../errors/AppError')
  * @param {Function} next - Express next function
  */
 
-const errorHandler = (err, req, res, next) => {
+function errorHandler(err, req, res, next) {
     console.log('Error: ', err);
+
     if (err instanceof AppError) {
         return res.status(err.statusCode).json({
             success: false,
