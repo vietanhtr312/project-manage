@@ -238,7 +238,7 @@ export default function WBSBoard() {
                     )}
                 </div>
 
-                <div className="flex-1 p-6 overflow-auto border-2 ml-[20px] border-t-0 rounded-tr-lg rounded-br-lg bg-yellow-50">
+                <div className="flex-1 p-6 overflow-auto border-2 ml-[20px] border-t-0 rounded-br-lg bg-yellow-50">
                     <div className="flex gap-6 justify-start items-start relative">
                         {modules.map((mod) => (
                             <div key={mod.id} className="relative w-60">

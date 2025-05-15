@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../assets/logo.svg";
 import { House, FolderKanban, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 const Sidebar = ({ display }) => {
+  const [state, setState] = useState('/home');
   return (
     <div
       className={`fixed top-0 left-0 h-screen w-[250px] bg-gray-100 shadow-lg z-50 transition-transform duration-700 ${
@@ -17,17 +18,17 @@ const Sidebar = ({ display }) => {
           </div>
         </div>
         <div className="flex flex-col gap-3">
-          <Link to={"/"}>
-            <div className="flex items-center space-x-2 w-full hover:bg-blue-100 pl-16 py-3 cursor-pointer">
+          <Link to={"/"} onClick={()=>setState('/home')}>
+            <div className={`flex items-center space-x-2 w-full hover:bg-blue-100 pl-16 py-3 cursor-pointer ${state === '/home' ? 'bg-blue-300' : ''}`}>
               <House className="text-black" />
-              <span className="text-sm font-semibold">Dashboard</span>
+              <span className="text-sm font-semibold">Home</span>
             </div>
           </Link>
 
-          <Link to={"/wbs"}>
-            <div className="flex items-center space-x-2 w-full hover:bg-blue-100 pl-16 py-3 cursor-pointer">
+          <Link to={"/wbs"} onClick={()=>setState('/wbs')}>
+            <div className={`flex items-center space-x-2 w-full hover:bg-blue-100 pl-16 py-3 cursor-pointer ${state === '/wbs' ? 'bg-blue-300' : ''}`}>
               <FolderKanban className="text-black" />
-              <span className="text-sm font-semibold">Projects</span>
+              <span className="text-sm font-semibold">Manage Projects</span>
             </div>
           </Link>
           <div className="flex items-center space-x-2 w-full hover:bg-blue-100 pl-16 py-3 cursor-pointer">
