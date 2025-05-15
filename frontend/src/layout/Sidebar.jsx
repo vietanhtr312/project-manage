@@ -6,7 +6,7 @@ const Sidebar = ({ display }) => {
   const [state, setState] = useState('/home');
   return (
     <div
-      className={`fixed top-0 left-0 h-screen w-[250px] bg-gray-100 shadow-lg z-50 transition-transform duration-700 ${
+      className={`fixed top-0 left-0 h-screen w-[250px] bg-black/10 backdrop-blur-md shadow-md z-50 transition-transform duration-700 ${
         display ? "translate-x-0" : "-translate-x-full"
       }`}
     >
@@ -14,25 +14,25 @@ const Sidebar = ({ display }) => {
         <div className="flex items-center ml-12 my-10 gap-4">
           <img src={logo} alt="Logo" className="" />
           <div className="flex flex-col text-blue-900 text-lg font-bold tracking-wide">
-            <span className="text-black uppercase">Project</span>Tracker
+            <span className="text-white uppercase">Project</span>Tracker
           </div>
         </div>
         <div className="flex flex-col gap-3">
           <Link to={"/"} onClick={()=>setState('/home')}>
-            <div className={`flex items-center space-x-2 w-full hover:bg-blue-100 pl-16 py-3 cursor-pointer ${state === '/home' ? 'bg-blue-300' : ''}`}>
-              <House className="text-black" />
+            <div className={`text-white flex items-center space-x-2 w-full hover:bg-black/30 pl-14 py-3 cursor-pointer ${state === '/home' ? 'bg-black/20' : ''}`}>
+              <House className="" />
               <span className="text-sm font-semibold">Home</span>
             </div>
           </Link>
 
           <Link to={"/wbs"} onClick={()=>setState('/wbs')}>
-            <div className={`flex items-center space-x-2 w-full hover:bg-blue-100 pl-16 py-3 cursor-pointer ${state === '/wbs' ? 'bg-blue-300' : ''}`}>
-              <FolderKanban className="text-black" />
+            <div className={`text-white flex items-center space-x-2 w-full hover:bg-black/30 hover:backdrop-blur-md pl-14 py-3 cursor-pointer ${state === '/wbs' ? 'bg-black/20' : ''}`}>
+              <FolderKanban className="" />
               <span className="text-sm font-semibold">Manage Projects</span>
             </div>
           </Link>
-          <div className="flex items-center space-x-2 w-full hover:bg-blue-100 pl-16 py-3 cursor-pointer">
-            <Settings className="text-black" />
+          <div className="text-white flex items-center space-x-2 w-full hover:bg-black/30 hover:backdrop-blur-md pl-14 py-3 cursor-pointer">
+            <Settings className="" />
             <span className="text-sm font-semibold">Settings</span>
           </div>
         </div>
