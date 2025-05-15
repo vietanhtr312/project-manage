@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SlidersHorizontal, Bell, User, ChevronDown } from "lucide-react";
-
+import { Link } from "react-router-dom";
 const user = {
   name: "John Doe",
   email: "john@gmail.com",
@@ -47,7 +47,9 @@ const Header = ({ display, setDisplay }) => {
             <div className="dropdown absolute top-10 right-0 mt-2 w-48 bg-white border rounded shadow-lg z-20">
               <div className="py-2 px-4 hover:bg-gray-100">Profile</div>
               <div className="py-2 px-4 hover:bg-gray-100">Settings</div>
-              <div className="py-2 px-4 hover:bg-gray-100">Logout</div>
+              <Link to={"/login"}>
+                <div className="py-2 px-4 hover:bg-gray-100">Logout</div>
+              </Link>
             </div>
           )}
         </div>

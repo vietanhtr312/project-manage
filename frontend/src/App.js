@@ -5,6 +5,8 @@ import HomePage from './pages/HomePage';
 import { KanbanPage } from './pages/KanbanPage';
 import { ProjectManagerLayout } from './layout/ProjectManagerLayout';
 import { WbsPage } from './pages/WbsPage';
+import { LoginPage } from './pages/LoginPage';
+import { SignupPage } from './pages/SignupPage';
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
           </Route>
 
         </Route>
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/signup' element={<SignupPage />} />
       </Routes>
     </Router>
   );
