@@ -48,6 +48,8 @@ const projectService = {
             await ProjectMember.insertMany(memberDocs);
             return newProject;
         } catch (error) {
+            console.log(error);
+            
             throw new AppError("Failed to create project");
         }
     },

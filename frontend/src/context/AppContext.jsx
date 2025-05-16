@@ -5,8 +5,10 @@ import { toast } from "react-toastify";
 export const AppContext = createContext();
 
 export const AppContextProvider = (props) => {
-    const backendUrl = process.env.BACKEND_URL;
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+
     const [userData, setUserData] = useState(null);
+    const token = localStorage.getItem('token');
 
     const fetchUserData = async () => {
         try {
@@ -15,11 +17,11 @@ export const AppContextProvider = (props) => {
                 throw new Error("No token found");
             }
 
-            const { data } = await axios.get(backendUrl + '/api/v1/user/me/profile',
+            const { data } = await axios.get(backendUrl + '/api/v1/users/me/profile',
                 { headers: { Authorization: `Bearer ${token}` } })
 
             if (data.success) {
-                setUserData(data.user)
+                setUserData(data.data)
             } else {
                 toast.error(data.message)
             }
@@ -33,7 +35,7 @@ export const AppContextProvider = (props) => {
     }, []);
 
     return (
-        <AppContext.Provider value={{ userData }}>
+        <AppContext.Provider value={{ userData, setUserData, token, backendUrl }}>
             {props.children}
         </AppContext.Provider>
     );

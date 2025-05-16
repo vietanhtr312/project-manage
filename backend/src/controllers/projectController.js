@@ -120,21 +120,30 @@ const projectController = {
                 })
             }
             if (role === "all") {
-                const [ledProjects, participatedProjects] = await Promise.allSettled([
-                    projectMemberService.getLedProjects(userId),
-                    projectMemberService.getParticipatedProjects(userId)
+                const projects = await Promise.allSettled([
+                    projectMemberService.getAllProjects(userId),
                 ]);
-                if (ledProjects.status === 'rejected' && participatedProjects.status === 'rejected') {
+                if (projects.status === 'rejected') {
                     throw new ResourceNotFoundError("Project not found");
                 }
                 
+                const result = projects
+                    .filter(project => project.status === 'fulfilled' && project.value)
+                    .map(project => {
+                        const now = new Date();
+                        const dueDate = new Date(project.value.due_date);
+                        const isComplete = dueDate < now;
+                        console.log(project.value);
+                        
+                        return {
+                            data: project.value[0],
+                            status: isComplete ? 'complete' : 'in progress'
+                        };
+                    });
                 res.status(200).json({
                     success: true,
                     message: "All projects fetched",
-                    data: {
-                        ledProjects: ledProjects.value || [] , 
-                        participatedProjects: participatedProjects.value || []
-                    }
+                    data: result
                 });
             }
 

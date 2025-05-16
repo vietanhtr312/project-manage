@@ -118,6 +118,19 @@ const projectMemberService = {
         }
     },
 
+    getAllProjects: async (userId) => {
+        try {
+            const projects = await ProjectMember.find({ member: userId})
+                .populate("project", "title")
+                .select('project');
+            console.log(projects)
+            if (!projects || projects.length === 0) throw new ResourceNotFoundError("Project not found");
+            return projects;
+        } catch (error) {
+            throw new AppError("Failed to fetch projects led by the user");
+        }
+    },
+
     getLedProjects: async (userId) => {
         try {
             const projects = await ProjectMember.find({ member: userId, role: "leader" })
