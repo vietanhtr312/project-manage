@@ -49,7 +49,7 @@ const projectService = {
             return newProject;
         } catch (error) {
             console.log(error);
-            
+
             throw new AppError("Failed to create project");
         }
     },
@@ -66,7 +66,51 @@ const projectService = {
         } catch (error) {
             throw new AppError("Failed to update project");
         }
-    }
+    },
+
+    getProjectStructure: async (projectId) => {
+        const project = await Project.findById(projectId).lean();
+        if (!project) throw new Error("Project not found");
+
+        const allModules = await Module.find({ project_id: projectId }).lean();
+
+        const moduleMap = {};
+        const topModules = [];
+
+        allModules.forEach(mod => {
+            mod.submodules = [];
+            mod.tasks = [];
+            moduleMap[mod._id.toString()] = mod;
+
+            if (!mod.parent_id) {
+                topModules.push(mod);
+            }
+        });
+
+        allModules.forEach(mod => {
+            if (mod.parent_id) {
+                const parent = moduleMap[mod.parent_id.toString()];
+                if (parent) {
+                    parent.submodules.push(mod);
+                }
+            }
+        });
+
+        const allTasks = await Task.find({
+            module_id: { $in: allModules.map(m => m._id) }
+        }).lean();
+
+        allTasks.forEach(task => {
+            const mod = moduleMap[task.module_id.toString()];
+            if (mod) {
+                mod.tasks.push(task);
+            }
+        });
+
+        project.modules = topModules;
+
+        return project;
+    },
 };
 
 module.exports = projectService;
