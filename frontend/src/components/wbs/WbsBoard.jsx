@@ -6,6 +6,26 @@ export default function WBSBoard() {
   const [modules, setModules] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
 
+  const handlefetchProjectTasks = async () => {
+    try {
+      const response = await axios.get(
+        `${backendUrl}/api/v1/projects/${projectId}/tasks`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.data.success) {
+        setModules(response.data.data);
+      } else {
+        console.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching project tasks:", error);
+    }
+  };
+
   const addModule = () => {
     const newModule = {
       id: Date.now(),
@@ -37,15 +57,15 @@ export default function WBSBoard() {
               submodules: mod.submodules.map((sub) =>
                 sub.id === submoduleId
                   ? {
-                      ...sub,
-                      tasks: [
-                        ...sub.tasks,
-                        {
-                          id: Date.now(),
-                          name: `Task ${sub.tasks.length + 1}`,
-                        },
-                      ],
-                    }
+                    ...sub,
+                    tasks: [
+                      ...sub.tasks,
+                      {
+                        id: Date.now(),
+                        name: `Task ${sub.tasks.length + 1}`,
+                      },
+                    ],
+                  }
                   : sub
               ),
             };
@@ -61,16 +81,16 @@ export default function WBSBoard() {
       prev.map((mod) =>
         mod.id === moduleId
           ? {
-              ...mod,
-              submodules: [
-                ...mod.submodules,
-                {
-                  id: Date.now(),
-                  name: `Submodule ${mod.submodules.length + 1}`,
-                  tasks: [],
-                },
-              ],
-            }
+            ...mod,
+            submodules: [
+              ...mod.submodules,
+              {
+                id: Date.now(),
+                name: `Submodule ${mod.submodules.length + 1}`,
+                tasks: [],
+              },
+            ],
+          }
           : mod
       )
     );
@@ -101,11 +121,11 @@ export default function WBSBoard() {
             submodules: mod.submodules.map((sub) =>
               sub.id === submoduleId
                 ? {
-                    ...sub,
-                    tasks: sub.tasks.map((t) =>
-                      t.id === taskId ? { ...t, name: newName } : t
-                    ),
-                  }
+                  ...sub,
+                  tasks: sub.tasks.map((t) =>
+                    t.id === taskId ? { ...t, name: newName } : t
+                  ),
+                }
                 : sub
             ),
           };
@@ -137,16 +157,16 @@ export default function WBSBoard() {
           prev.map((mod) =>
             mod.id === moduleId
               ? {
-                  ...mod,
-                  submodules: mod.submodules.map((sub) =>
-                    sub.id === submoduleId
-                      ? {
-                          ...sub,
-                          tasks: sub.tasks.filter((t) => t.id !== taskId),
-                        }
-                      : sub
-                  ),
-                }
+                ...mod,
+                submodules: mod.submodules.map((sub) =>
+                  sub.id === submoduleId
+                    ? {
+                      ...sub,
+                      tasks: sub.tasks.filter((t) => t.id !== taskId),
+                    }
+                    : sub
+                ),
+              }
               : mod
           )
         );
@@ -155,9 +175,9 @@ export default function WBSBoard() {
           prev.map((mod) =>
             mod.id === moduleId
               ? {
-                  ...mod,
-                  tasks: mod.tasks.filter((t) => t.id !== taskId),
-                }
+                ...mod,
+                tasks: mod.tasks.filter((t) => t.id !== taskId),
+              }
               : mod
           )
         );
@@ -167,11 +187,11 @@ export default function WBSBoard() {
         prev.map((mod) =>
           mod.id === moduleId
             ? {
-                ...mod,
-                submodules: mod.submodules.filter(
-                  (sub) => sub.id !== submoduleId
-                ),
-              }
+              ...mod,
+              submodules: mod.submodules.filter(
+                (sub) => sub.id !== submoduleId
+              ),
+            }
             : mod
         )
       );
@@ -195,15 +215,15 @@ export default function WBSBoard() {
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-[360px] bg-gray-100 p-4 border-r overflow-auto bg-white rounded h-[500px]">
-          <h2 className="text-xl font-bold mb-4">Details</h2>
+        <div className="w-[360px] bg-black/20 p-4 overflow-auto rounded h-[500px]">
+          <h2 className="text-xl font-bold mb-4 text-white">Details</h2>
           {selectedItem ? (
-            <div className="space-y-4">
+            <div className="space-y-4 text-white">
               <p>
                 <strong>Type:</strong> {selectedItem.type}
               </p>
               <input
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded text-black"
                 value={selectedItem.name}
                 onChange={(e) => updateItemName(e.target.value)}
               />
@@ -240,22 +260,17 @@ export default function WBSBoard() {
               </button>
             </div>
           ) : (
-            <p>Select a item to see details</p>
+            <p className="text-white">Select a item to see details</p>
           )}
         </div>
-
-        <div className="flex-1 p-6 overflow-auto border-2 ml-[20px] border-t-0 rounded-tr-lg rounded-br-lg bg-yellow-50">
+        <div className="flex-1 p-6 overflow-auto border-2 ml-[20px] border-t-0 rounded-b-lg bg-yellow-50">
           <div className="flex gap-6 justify-start items-start relative">
             {modules.map((mod) => (
               <div key={mod.id} className="relative w-60">
                 <div
                   className="bg-green-100 border rounded p-3 shadow text-center cursor-pointer hover:bg-green-200 mb-4"
                   onClick={() =>
-                    selectItem({
-                      type: "module",
-                      moduleId: mod.id,
-                      name: mod.name,
-                    })
+                    selectItem({ type: "module", moduleId: mod.id, name: mod.name })
                   }
                 >
                   <strong>{mod.name}</strong>
