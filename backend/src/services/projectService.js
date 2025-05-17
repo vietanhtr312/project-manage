@@ -2,6 +2,20 @@ const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 const Project = require('../models/Project');
 const ProjectMember = require('../models/ProjectMember');
 const AppError = require('../errors/AppError'); // Assuming AppError is a custom error class
+const Module = require('../models/Module');
+const Task = require('../models/Task');
+
+const buildModuleTree = async (parentId, moduleMap) => {
+    const children = await Module.find({ parent: parentId }).lean();
+
+    for (let child of children) {
+        child.submodules = await buildModuleTree(child._id, moduleMap);
+        child.tasks = await Task.find({ module: child._id }).lean();
+        moduleMap[child._id.toString()] = child;
+    }
+
+    return children;
+};
 
 const projectService = {
     getProjectById: async (projectId) => {
@@ -49,7 +63,7 @@ const projectService = {
             return newProject;
         } catch (error) {
             console.log(error);
-            
+
             throw new AppError("Failed to create project");
         }
     },
@@ -66,7 +80,23 @@ const projectService = {
         } catch (error) {
             throw new AppError("Failed to update project");
         }
-    }
+    },
+
+    getProjectStructure: async (projectId) => {
+        // 1. Lấy thông tin Project
+        const project = await Project.findById(projectId).lean();
+        if (!project) throw new Error("Project not found");
+
+        const moduleMap = {};
+
+        // 2. Lấy tất cả các module gốc (parent là project)
+        const topModules = await buildModuleTree(projectId, moduleMap);
+
+        // 3. Gắn vào project
+        project.modules = topModules;
+
+        return project;
+    },
 };
 
 module.exports = projectService;

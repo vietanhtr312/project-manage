@@ -1,30 +1,10 @@
 import React, { useState } from "react";
 import { Minus } from "lucide-react";
-import axios from "axios";
-export default function WBSBoard() {
+
+export default function WBSBoard({ projectStructure }) {
   const [projectName, setProjectName] = useState("New Project");
   const [modules, setModules] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
-
-  // const handlefetchProjectTasks = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `${backendUrl}/api/v1/projects/${projectId}/tasks`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     if (response.data.success) {
-  //       setModules(response.data.data);
-  //     } else {
-  //       console.error(response.data.message);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching project tasks:", error);
-  //   }
-  // };
 
   const addModule = () => {
     const newModule = {
