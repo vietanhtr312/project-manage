@@ -1,15 +1,39 @@
 import React from "react";
 import { Button, Form, Input, Typography } from "antd";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { registerUser } from "../api/authApi";
+
 export const SignupPage = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+
+  const handleSignup = async (values) => {
+    try {
+      const res = await registerUser(values);
+      if (res.success) {
+        toast.success("Đăng ký thành công!");
+        navigate("/");
+      }
+    } catch (error) {
+      const errorMsg =
+        error?.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại.";
+      toast.error(errorMsg);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-slate-100">
       <div className="w-full max-w-[350px] mx-auto mt-30 p-3 bg-white rounded-lg">
         <Typography.Title className="text-center" level={2}>
           Signup
         </Typography.Title>
-        <Form form={form} validateTrigger={["onBlur", "onChange"]}>
+        <Form
+          form={form}
+          onFinish={handleSignup}
+          validateTrigger={["onBlur", "onChange"]}
+        >
           <Form.Item name="username" rules={[{ required: true }]}>
             <Input placeholder="Username" />
           </Form.Item>

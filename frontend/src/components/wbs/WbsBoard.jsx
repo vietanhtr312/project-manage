@@ -1,30 +1,30 @@
 import React, { useState } from "react";
 import { Minus } from "lucide-react";
-
+import axios from "axios";
 export default function WBSBoard() {
   const [projectName, setProjectName] = useState("New Project");
   const [modules, setModules] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const handlefetchProjectTasks = async () => {
-    try {
-      const response = await axios.get(
-        `${backendUrl}/api/v1/projects/${projectId}/tasks`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (response.data.success) {
-        setModules(response.data.data);
-      } else {
-        console.error(response.data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching project tasks:", error);
-    }
-  };
+  // const handlefetchProjectTasks = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${backendUrl}/api/v1/projects/${projectId}/tasks`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     if (response.data.success) {
+  //       setModules(response.data.data);
+  //     } else {
+  //       console.error(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching project tasks:", error);
+  //   }
+  // };
 
   const addModule = () => {
     const newModule = {
@@ -57,15 +57,15 @@ export default function WBSBoard() {
               submodules: mod.submodules.map((sub) =>
                 sub.id === submoduleId
                   ? {
-                    ...sub,
-                    tasks: [
-                      ...sub.tasks,
-                      {
-                        id: Date.now(),
-                        name: `Task ${sub.tasks.length + 1}`,
-                      },
-                    ],
-                  }
+                      ...sub,
+                      tasks: [
+                        ...sub.tasks,
+                        {
+                          id: Date.now(),
+                          name: `Task ${sub.tasks.length + 1}`,
+                        },
+                      ],
+                    }
                   : sub
               ),
             };
@@ -81,16 +81,16 @@ export default function WBSBoard() {
       prev.map((mod) =>
         mod.id === moduleId
           ? {
-            ...mod,
-            submodules: [
-              ...mod.submodules,
-              {
-                id: Date.now(),
-                name: `Submodule ${mod.submodules.length + 1}`,
-                tasks: [],
-              },
-            ],
-          }
+              ...mod,
+              submodules: [
+                ...mod.submodules,
+                {
+                  id: Date.now(),
+                  name: `Submodule ${mod.submodules.length + 1}`,
+                  tasks: [],
+                },
+              ],
+            }
           : mod
       )
     );
@@ -121,11 +121,11 @@ export default function WBSBoard() {
             submodules: mod.submodules.map((sub) =>
               sub.id === submoduleId
                 ? {
-                  ...sub,
-                  tasks: sub.tasks.map((t) =>
-                    t.id === taskId ? { ...t, name: newName } : t
-                  ),
-                }
+                    ...sub,
+                    tasks: sub.tasks.map((t) =>
+                      t.id === taskId ? { ...t, name: newName } : t
+                    ),
+                  }
                 : sub
             ),
           };
@@ -157,16 +157,16 @@ export default function WBSBoard() {
           prev.map((mod) =>
             mod.id === moduleId
               ? {
-                ...mod,
-                submodules: mod.submodules.map((sub) =>
-                  sub.id === submoduleId
-                    ? {
-                      ...sub,
-                      tasks: sub.tasks.filter((t) => t.id !== taskId),
-                    }
-                    : sub
-                ),
-              }
+                  ...mod,
+                  submodules: mod.submodules.map((sub) =>
+                    sub.id === submoduleId
+                      ? {
+                          ...sub,
+                          tasks: sub.tasks.filter((t) => t.id !== taskId),
+                        }
+                      : sub
+                  ),
+                }
               : mod
           )
         );
@@ -175,9 +175,9 @@ export default function WBSBoard() {
           prev.map((mod) =>
             mod.id === moduleId
               ? {
-                ...mod,
-                tasks: mod.tasks.filter((t) => t.id !== taskId),
-              }
+                  ...mod,
+                  tasks: mod.tasks.filter((t) => t.id !== taskId),
+                }
               : mod
           )
         );
@@ -187,11 +187,11 @@ export default function WBSBoard() {
         prev.map((mod) =>
           mod.id === moduleId
             ? {
-              ...mod,
-              submodules: mod.submodules.filter(
-                (sub) => sub.id !== submoduleId
-              ),
-            }
+                ...mod,
+                submodules: mod.submodules.filter(
+                  (sub) => sub.id !== submoduleId
+                ),
+              }
             : mod
         )
       );
@@ -270,7 +270,11 @@ export default function WBSBoard() {
                 <div
                   className="bg-green-100 border rounded p-3 shadow text-center cursor-pointer hover:bg-green-200 mb-4"
                   onClick={() =>
-                    selectItem({ type: "module", moduleId: mod.id, name: mod.name })
+                    selectItem({
+                      type: "module",
+                      moduleId: mod.id,
+                      name: mod.name,
+                    })
                   }
                 >
                   <strong>{mod.name}</strong>

@@ -8,7 +8,6 @@ import { WbsPage } from './pages/WbsPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { ToastContainer } from 'react-toastify';
-
 function App() {
   return (
     <>

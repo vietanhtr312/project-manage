@@ -9,7 +9,6 @@ const Column = ({ title, tasks }) => {
           <TaskCard key={task.id} title={task.title} progress={task.progress} />
         ))}
       </div>
-      <button className="font-bold mt-3 text-[#B5ABAB]">+ Add task</button>
     </div>
   );
 };
