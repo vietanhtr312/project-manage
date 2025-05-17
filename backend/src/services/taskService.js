@@ -1,38 +1,52 @@
 const Task = require('../models/Task');
+const Module = require('../models/Module');
 const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 
 const taskService = {
-    createTask: async ({ name, description, user_id, start_date, due_date, priority }) => {
-        return await Task.create({ name, description, user_id, start_date, due_date, priority });
+    createTask: async (moduleId, name, description, start_date, due_date, priority) => {
+        const module = await Module.findById(moduleId);
+        if (!module) {
+            throw new ResourceNotFoundError("Module not found");
+        }
+
+        return await Task.create({
+            module: moduleId,
+            name,
+            description,
+            start_date,
+            due_date,
+            priority
+        });
     },
 
-    getTasks: async (projectId, page, limit) => {
-        const skip = (page - 1) * limit;
-        return await Task.find({ project: projectId }).skip(skip).limit(limit);
+    getTasksByModule: async (moduleId) => {
+        return await Task.find({ module: moduleId });
     },
 
-    getTaskById: async (id) => {
-        const task = await Task.findById(id);
-        if (!task) throw new ResourceNotFoundError("Task not found");
+    getTaskById: async (taskId) => {
+        const task = await Task.findById(taskId).populate('module');
+        if (!task) {
+            throw new ResourceNotFoundError("Task not found");
+        }
         return task;
     },
 
-    updateTask: async (id, updates) => {
-        const task = await Task.findByIdAndUpdate(id, updates, { new: true });
-        if (!task) throw new ResourceNotFoundError("Task not found");
+    updateTask: async (taskId, updateData) => {
+        const task = await Task.findByIdAndUpdate(
+            taskId,
+            updateData,
+            { new: true, runValidators: true }
+        );
+
+        if (!task) {
+            throw new ResourceNotFoundError("Task not found");
+        }
+
         return task;
     },
 
-    deleteTask: async (id) => {
-        const task = await Task.findByIdAndDelete(id);
-        if (!task) throw new ResourceNotFoundError("Task not found");
-        return task;
-    },
-
-    updateTaskStatus: async (id, status) => {
-        const task = await Task.findByIdAndUpdate(id, { status }, { new: true });
-        if (!task) throw new ResourceNotFoundError("Task not found");
-        return task;
+    deleteTask: async (taskId) => {
+        await Task.findByIdAndDelete(taskId);
     }
 };
 
