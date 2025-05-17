@@ -1,31 +1,22 @@
-const Task = require('../models/Task');
-const User = require('../models/User');
-const AppError = require('../errors/AppError');
 const taskService = require('../services/taskService');
+const taskMemberService = require('../services/taskMemberService');
 
 exports.createTask = async (req, res, next) => {
     try {
-        const { name, description, user_id, start_date, due_date, priority } = req.body;
-
-        if (!name || name.length > 255) {
-            return next(new AppError("Tên công việc không hợp lệ", 400));
-        }
-        if (!due_date || new Date(due_date) <= new Date(start_date)) {
-            return next(new AppError("Deadline phải sau ngày bắt đầu", 400));
-        }
-
-        const task = await taskService.createTask({ name, description, user_id, start_date, due_date, priority });
-        res.status(201).json({ message: "OK", task_id: task._id });
+        const { moduleId } = req.params;
+        const { name, description, start_date, due_date} = req.body;
+        const task = await taskService.createTask(moduleId, name, description, start_date, due_date);
+        res.status(201).json({ success: true, data: task });
     } catch (error) {
         next(error);
     }
 };
 
-exports.getTasks = async (req, res, next) => {
+exports.getTasksByModule = async (req, res, next) => {
     try {
-        const { projectId, page = 1, limit = 10 } = req.query;
-        const tasks = await taskService.getTasks(projectId, page, limit);
-        res.status(200).json({ message: "OK", data: tasks });
+        const { moduleId } = req.params;
+        const tasks = await taskService.getTasksByModule(moduleId);
+        res.status(200).json({ success: true, data: tasks });
     } catch (error) {
         next(error);
     }
@@ -35,7 +26,7 @@ exports.getTaskById = async (req, res, next) => {
     try {
         const { id } = req.params;
         const task = await taskService.getTaskById(id);
-        res.status(200).json({ message: "OK", data: task });
+        res.status(200).json({ success: true, data: task });
     } catch (error) {
         next(error);
     }
@@ -44,9 +35,9 @@ exports.getTaskById = async (req, res, next) => {
 exports.updateTask = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const updates = req.body;
-        const task = await taskService.updateTask(id, updates);
-        res.status(200).json({ message: "Updated", data: task });
+        const updateData = req.body;
+        const task = await taskService.updateTask(id, updateData);
+        res.status(200).json({ success: true, data: task });
     } catch (error) {
         next(error);
     }
@@ -56,18 +47,7 @@ exports.deleteTask = async (req, res, next) => {
     try {
         const { id } = req.params;
         await taskService.deleteTask(id);
-        res.status(200).json({ message: "Deleted" });
-    } catch (error) {
-        next(error);
-    }
-};
-
-exports.updateTaskStatus = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const { status } = req.body;
-        const task = await taskService.updateTaskStatus(id, status);
-        res.status(200).json({ message: "Status updated", data: task });
+        res.status(200).json({ success: true, message: "Task deleted" });
     } catch (error) {
         next(error);
     }

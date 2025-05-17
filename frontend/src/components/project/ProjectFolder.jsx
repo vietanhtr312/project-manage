@@ -1,60 +1,33 @@
-import React, { use, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { AppContext } from "../../context/AppContext";
 import ProjectCard from "./ProjectCard";
+import projectApi from "../../api/projectApi";
 
-const project = {
-  title: "Project 1",
-  description: "This is a sample project",
-  createdAt: "2023-10-01",
-  updatedAt: "2023-10-02",
-  owner: "John Doe",
-  members: ["John Doe", "Jane Smith"],
-  tasks: ["Task 1", "Task 2"],
-  status: "In Progress",
-  priority: "High",
-};
-
-const ProjectFolder = ({ onClick }) => {
-  const { userData, backendUrl, token } = useContext(AppContext);
+const ProjectFolder = () => {
+  const { userData, backendUrl, token, projectId, setProjectId } =
+    useContext(AppContext);
   const [projects, setProjects] = useState([]);
-  const [projectDetails, setProjectDetails] = useState(project);
+  const [projectDetails, setProjectDetails] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [projectId, setProjectId] = useState(null);
-
-  const handleCardClick = (id) => {
-    fetchProjectDetails(id);
-  };
 
   useEffect(() => {
     if (projectId) {
-      console.log(projectId);
-
       fetchProjectDetails(projectId);
       setShowDetails(true);
     }
   }, [projectId]);
 
-  // const handlefetchProjects = async () => {
-  //     try {
-  //         const response = await axios.get(`${backendUrl}/api/v1/projects?userId=${userData._id}&role=all`, {
-  //             method: 'GET',
-  //             headers: {
-  //                 Authorization: `Bearer ${token}`
-  //             }
-  //         });
-  //         if (response.data.success) {
-  //             setProjects(response.data.data);
-  //         } else {
-  //             console.error(response.data.message);
-  //         }
-  //     }
-  //     catch (error) {
-  //         console.error("Error fetching project:", error);
-  //     }
-  // };
+  const handlefetchProjects = async () => {
+    try {
+      const response = await projectApi.getProjects(userData._id);
+      if (response.data.success) setProjects(response.data.data);
+      else console.error(response.data.message);
+    } catch (error) {
+      console.error("Error fetching project:", error);
+    }
+  };
 
   // useEffect(() => {
   //     handlefetchProjects();
@@ -62,23 +35,9 @@ const ProjectFolder = ({ onClick }) => {
 
   const fetchProjectDetails = async (projectId) => {
     try {
-      const response = await axios.get(
-        `${backendUrl}/api/v1/projects/${projectId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = response.data;
-      console.log(data);
-
-      if (data.success) {
-        setProjectDetails(data.data);
-      } else {
-        console.error(data.message);
-      }
+      const response = await projectApi.getProjectById(projectId);
+      if (response.data.success) setProjectDetails(response.data.data);
+      else console.error(response.data.message);
     } catch (error) {
       console.error("Error fetching project details:", error);
     }
@@ -87,6 +46,7 @@ const ProjectFolder = ({ onClick }) => {
   const navigate = useNavigate();
 
   const handleManageClick = () => {
+    setProjectId(projectId);
     navigate("/wbs");
   };
 
@@ -108,7 +68,7 @@ const ProjectFolder = ({ onClick }) => {
             <ProjectCard
               key={index}
               project={project}
-              onClick={() => setProjectId(project.data.project._id)}
+              onClick={() => setProjectId(project.project._id)}
             />
           ))}
         <AddNewProjectCard />
@@ -122,7 +82,9 @@ const ProjectFolder = ({ onClick }) => {
               onClick={handleManageClick}
               className="h-10 text-black py-2 pl-4 pr-2 rounded-lg bg-green-100 hover:bg-green-500 hover:text-white flex items-center"
             >
-              <span className="mb-1">Manage</span>
+              <span className="mb-1" onClick={() => {}}>
+                Manage
+              </span>
               <ChevronRight />
             </button>
           )}

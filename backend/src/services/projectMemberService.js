@@ -123,7 +123,6 @@ const projectMemberService = {
             const projects = await ProjectMember.find({ member: userId})
                 .populate("project", "title")
                 .select('project');
-            console.log(projects)
             if (!projects || projects.length === 0) throw new ResourceNotFoundError("Project not found");
             return projects;
         } catch (error) {

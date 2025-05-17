@@ -1,9 +1,8 @@
-import React, { useState } from "react";
 import logo from "../assets/logo.svg";
 import { House, FolderKanban, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 const Sidebar = ({ display }) => {
-  const [state, setState] = useState('/home');
+  const path = useLocation().pathname;
   return (
     <div
       className={`fixed top-0 left-0 h-screen w-[250px] bg-black/10 backdrop-blur-md shadow-md z-50 transition-transform duration-700 ${
@@ -18,15 +17,15 @@ const Sidebar = ({ display }) => {
           </div>
         </div>
         <div className="flex flex-col gap-3">
-          <Link to={"/"} onClick={()=>setState('/home')}>
-            <div className={`text-white flex items-center space-x-2 w-full hover:bg-black/30 pl-14 py-3 cursor-pointer ${state === '/home' ? 'bg-black/20' : ''}`}>
+          <Link to={"/"}>
+            <div className={`text-white flex items-center space-x-2 w-full hover:bg-black/30 pl-14 py-3 cursor-pointer ${path === '/' ? 'bg-black/20' : ''}`}>
               <House className="" />
               <span className="text-sm font-semibold">Home</span>
             </div>
           </Link>
 
-          <Link to={"/wbs"} onClick={()=>setState('/wbs')}>
-            <div className={`text-white flex items-center space-x-2 w-full hover:bg-black/30 hover:backdrop-blur-md pl-14 py-3 cursor-pointer ${state === '/wbs' ? 'bg-black/20' : ''}`}>
+          <Link to={"/wbs"}>
+            <div className={`text-white flex items-center space-x-2 w-full hover:bg-black/30 hover:backdrop-blur-md pl-14 py-3 cursor-pointer ${path === '/wbs' || path === '/kaban' ? 'bg-black/20' : ''}`}>
               <FolderKanban className="" />
               <span className="text-sm font-semibold">Manage Projects</span>
             </div>

@@ -120,26 +120,29 @@ const projectController = {
                 })
             }
             if (role === "all") {
-                const projects = await Promise.allSettled([
+                const projectsResult = await Promise.allSettled([
                     projectMemberService.getAllProjects(userId),
                 ]);
-                if (projects.status === 'rejected') {
+
+                const fulfilled = projectsResult.find(p => p.status === 'fulfilled');
+
+                if (!fulfilled || !fulfilled.value) {
                     throw new ResourceNotFoundError("Project not found");
                 }
-                
-                const result = projects
-                    .filter(project => project.status === 'fulfilled' && project.value)
-                    .map(project => {
-                        const now = new Date();
-                        const dueDate = new Date(project.value.due_date);
-                        const isComplete = dueDate < now;
-                        console.log(project.value);
-                        
-                        return {
-                            data: project.value[0],
-                            status: isComplete ? 'complete' : 'in progress'
-                        };
-                    });
+
+                const projects = fulfilled.value;
+
+                const now = new Date();
+                const result = projects.map(pm => {
+                    const dueDate = new Date(pm.project.due_date || now);
+                    const isComplete = dueDate < now;
+
+                    return {
+                        ...pm.toObject(),
+                        status: isComplete ? 'complete' : 'in progress'
+                    };
+                });
+
                 res.status(200).json({
                     success: true,
                     message: "All projects fetched",
@@ -151,7 +154,22 @@ const projectController = {
         catch (error) {
             next(error)
         }
-    }
+    },
+
+    getProjectStructure: async (req, res, next) => {
+        try {
+            const { projectId } = req.params;
+            const project = await projectService.getProjectStructure(projectId);
+
+            res.status(200).json({
+                success: true,
+                message: 'Project detail fetched successfully',
+                data: project,
+            });
+        } catch (error) {
+            next(error); 
+        }
+    },
 };
 
 module.exports = projectController;

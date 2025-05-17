@@ -10,6 +10,8 @@ export const AppContextProvider = (props) => {
     const [userData, setUserData] = useState(null);
     const token = localStorage.getItem('token');
 
+    const [projectId, setProjectId] = useState(null);
+
     const fetchUserData = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -35,7 +37,7 @@ export const AppContextProvider = (props) => {
     }, []);
 
     return (
-        <AppContext.Provider value={{ userData, setUserData, token, backendUrl }}>
+        <AppContext.Provider value={{ userData, setUserData, token, backendUrl, projectId, setProjectId }}>
             {props.children}
         </AppContext.Provider>
     );
