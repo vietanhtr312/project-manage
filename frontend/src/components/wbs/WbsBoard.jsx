@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Minus } from "lucide-react";
 
-export default function WBSBoard({projectStructure}) {
+export default function WBSBoard({ projectStructure }) {
   const [projectName, setProjectName] = useState("New Project");
   const [modules, setModules] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -37,15 +37,15 @@ export default function WBSBoard({projectStructure}) {
               submodules: mod.submodules.map((sub) =>
                 sub.id === submoduleId
                   ? {
-                    ...sub,
-                    tasks: [
-                      ...sub.tasks,
-                      {
-                        id: Date.now(),
-                        name: `Task ${sub.tasks.length + 1}`,
-                      },
-                    ],
-                  }
+                      ...sub,
+                      tasks: [
+                        ...sub.tasks,
+                        {
+                          id: Date.now(),
+                          name: `Task ${sub.tasks.length + 1}`,
+                        },
+                      ],
+                    }
                   : sub
               ),
             };
@@ -61,16 +61,16 @@ export default function WBSBoard({projectStructure}) {
       prev.map((mod) =>
         mod.id === moduleId
           ? {
-            ...mod,
-            submodules: [
-              ...mod.submodules,
-              {
-                id: Date.now(),
-                name: `Submodule ${mod.submodules.length + 1}`,
-                tasks: [],
-              },
-            ],
-          }
+              ...mod,
+              submodules: [
+                ...mod.submodules,
+                {
+                  id: Date.now(),
+                  name: `Submodule ${mod.submodules.length + 1}`,
+                  tasks: [],
+                },
+              ],
+            }
           : mod
       )
     );
@@ -101,11 +101,11 @@ export default function WBSBoard({projectStructure}) {
             submodules: mod.submodules.map((sub) =>
               sub.id === submoduleId
                 ? {
-                  ...sub,
-                  tasks: sub.tasks.map((t) =>
-                    t.id === taskId ? { ...t, name: newName } : t
-                  ),
-                }
+                    ...sub,
+                    tasks: sub.tasks.map((t) =>
+                      t.id === taskId ? { ...t, name: newName } : t
+                    ),
+                  }
                 : sub
             ),
           };
@@ -137,16 +137,16 @@ export default function WBSBoard({projectStructure}) {
           prev.map((mod) =>
             mod.id === moduleId
               ? {
-                ...mod,
-                submodules: mod.submodules.map((sub) =>
-                  sub.id === submoduleId
-                    ? {
-                      ...sub,
-                      tasks: sub.tasks.filter((t) => t.id !== taskId),
-                    }
-                    : sub
-                ),
-              }
+                  ...mod,
+                  submodules: mod.submodules.map((sub) =>
+                    sub.id === submoduleId
+                      ? {
+                          ...sub,
+                          tasks: sub.tasks.filter((t) => t.id !== taskId),
+                        }
+                      : sub
+                  ),
+                }
               : mod
           )
         );
@@ -155,9 +155,9 @@ export default function WBSBoard({projectStructure}) {
           prev.map((mod) =>
             mod.id === moduleId
               ? {
-                ...mod,
-                tasks: mod.tasks.filter((t) => t.id !== taskId),
-              }
+                  ...mod,
+                  tasks: mod.tasks.filter((t) => t.id !== taskId),
+                }
               : mod
           )
         );
@@ -167,11 +167,11 @@ export default function WBSBoard({projectStructure}) {
         prev.map((mod) =>
           mod.id === moduleId
             ? {
-              ...mod,
-              submodules: mod.submodules.filter(
-                (sub) => sub.id !== submoduleId
-              ),
-            }
+                ...mod,
+                submodules: mod.submodules.filter(
+                  (sub) => sub.id !== submoduleId
+                ),
+              }
             : mod
         )
       );
@@ -250,7 +250,11 @@ export default function WBSBoard({projectStructure}) {
                 <div
                   className="bg-green-100 border rounded p-3 shadow text-center cursor-pointer hover:bg-green-200 mb-4"
                   onClick={() =>
-                    selectItem({ type: "module", moduleId: mod.id, name: mod.name })
+                    selectItem({
+                      type: "module",
+                      moduleId: mod.id,
+                      name: mod.name,
+                    })
                   }
                 >
                   <strong>{mod.name}</strong>
