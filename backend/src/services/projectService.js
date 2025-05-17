@@ -2,6 +2,20 @@ const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 const Project = require('../models/Project');
 const ProjectMember = require('../models/ProjectMember');
 const AppError = require('../errors/AppError'); // Assuming AppError is a custom error class
+const Module = require('../models/Module');
+const Task = require('../models/Task');
+
+const buildModuleTree = async (parentId, moduleMap) => {
+    const children = await Module.find({ parent: parentId }).lean();
+
+    for (let child of children) {
+        child.submodules = await buildModuleTree(child._id, moduleMap);
+        child.tasks = await Task.find({ module: child._id }).lean();
+        moduleMap[child._id.toString()] = child;
+    }
+
+    return children;
+};
 
 const projectService = {
     getProjectById: async (projectId) => {
@@ -69,44 +83,16 @@ const projectService = {
     },
 
     getProjectStructure: async (projectId) => {
+        // 1. Lấy thông tin Project
         const project = await Project.findById(projectId).lean();
         if (!project) throw new Error("Project not found");
 
-        const allModules = await Module.find({ project_id: projectId }).lean();
-
         const moduleMap = {};
-        const topModules = [];
 
-        allModules.forEach(mod => {
-            mod.submodules = [];
-            mod.tasks = [];
-            moduleMap[mod._id.toString()] = mod;
+        // 2. Lấy tất cả các module gốc (parent là project)
+        const topModules = await buildModuleTree(projectId, moduleMap);
 
-            if (!mod.parent_id) {
-                topModules.push(mod);
-            }
-        });
-
-        allModules.forEach(mod => {
-            if (mod.parent_id) {
-                const parent = moduleMap[mod.parent_id.toString()];
-                if (parent) {
-                    parent.submodules.push(mod);
-                }
-            }
-        });
-
-        const allTasks = await Task.find({
-            module_id: { $in: allModules.map(m => m._id) }
-        }).lean();
-
-        allTasks.forEach(task => {
-            const mod = moduleMap[task.module_id.toString()];
-            if (mod) {
-                mod.tasks.push(task);
-            }
-        });
-
+        // 3. Gắn vào project
         project.modules = topModules;
 
         return project;

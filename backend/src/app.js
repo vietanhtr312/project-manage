@@ -11,6 +11,8 @@ const notificationRoutes = require('./routes/notificationRoutes')
 const errorHandler = require("./middlewares/errorHandler");
 const app = express();
 const moduleRoutes = require('./routes/moduleRoutes');
+const taskMemberRoutes = require('./routes/taskMemberRoutes');
+
 //Middlewares
 app.use(cors({
     origin: process.env.ALLOWED_ORIGINS || '*',
@@ -29,9 +31,12 @@ app.get("/", (req, res) => {
 //Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/projects', require('./routes/projectRoutes'));
-app.use('/api/v1/tasks', require('./routes/taskRoutes'));
-app.use('/api/modules', authMiddleware, moduleRoutes);
+app.use('/api/v1/projects', projectRoutes);
+app.use('/api/v1/tasks', taskRoutes);
+app.use('/api/v1/modules', moduleRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1/taskmembers', taskMemberRoutes);
+
 //Error Handling
 app.use(errorHandler)
 const start = async () => {

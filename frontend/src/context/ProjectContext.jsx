@@ -1,4 +1,3 @@
-import axios from "axios";
 import { createContext, useEffect, useState, useContext } from "react";
 import { toast } from "react-toastify";
 import { AppContext } from "./AppContext";
@@ -23,6 +22,19 @@ export const ProjectContextProvider = (props) => {
         }
     }
 
+    const getModuleById = async (moduleId) => {
+        try {
+            const response = await wbsApi.getModuleById(moduleId);
+            if (response.data.success) {
+                return response.data.data;
+            } else {
+                console.error("Error fetching module:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error fetching module:", error);
+        }
+    }
+
     const createModule = async (parentId, module) => {
         try {
             const response = await wbsApi.createModule(parentId, module);
@@ -36,9 +48,9 @@ export const ProjectContextProvider = (props) => {
         }
     }
 
-    const updateModule = async (projectId, moduleId, module) => {
+    const updateModule = async (moduleId, module) => {
         try {
-            const response = await wbsApi.updateModule(projectId, moduleId, module);
+            const response = await wbsApi.updateModule(moduleId, module);
             if (response.data.success) {
                 setProjectStructure((prev) =>
                     prev.map((item) => (item.id === moduleId ? response.data.data : item))
@@ -51,9 +63,9 @@ export const ProjectContextProvider = (props) => {
         }
     }
 
-    const deleteModule = async (projectId, moduleId) => {
+    const deleteModule = async (moduleId) => {
         try {
-            const response = await wbsApi.deleteModule(projectId, moduleId);
+            const response = await wbsApi.deleteModule(moduleId);
             if (response.data.success) {
                 setProjectStructure((prev) =>
                     prev.filter((item) => item.id !== moduleId)
@@ -66,9 +78,22 @@ export const ProjectContextProvider = (props) => {
         }
     }
 
-    const createTask = async (projectId, moduleId, task) => {
+    const getTaskById = async (taskId) => {
         try {
-            const response = await wbsApi.createTask(projectId, moduleId, task);
+            const response = await wbsApi.getTaskById(taskId);
+            if (response.data.success) {
+                return response.data.data;
+            } else {
+                console.error("Error fetching task:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error fetching task:", error);
+        }
+    }
+
+    const createTask = async (moduleId, task) => {
+        try {
+            const response = await wbsApi.createTask(moduleId, task);
             if (response.data.success) {
                 setProjectStructure((prev) =>
                     prev.map((item) =>
@@ -85,9 +110,9 @@ export const ProjectContextProvider = (props) => {
         }
     }
 
-    const updateTask = async (projectId, moduleId, taskId, task) => {
+    const updateTask = async (taskId, task) => {
         try {
-            const response = await wbsApi.updateTask(projectId, moduleId, taskId, task);
+            const response = await wbsApi.updateTask(taskId, task);
             if (response.data.success) {
                 setProjectStructure((prev) =>
                     prev.map((item) =>
@@ -109,9 +134,9 @@ export const ProjectContextProvider = (props) => {
         }
     }
 
-    const deleteTask = async (projectId, moduleId, taskId) => {
+    const deleteTask = async (taskId) => {
         try {
-            const response = await wbsApi.deleteTask(projectId, moduleId, taskId);
+            const response = await wbsApi.deleteTask(taskId);
             if (response.data.success) {
                 setProjectStructure((prev) =>
                     prev.map((item) =>
@@ -131,13 +156,52 @@ export const ProjectContextProvider = (props) => {
         }
     }
 
+    const getTaskMembers = async (taskId) => {
+        try {
+            const response = await wbsApi.getTaskMembers(taskId);
+            if (response.data.success) {
+                return response.data.data;
+            } else {
+                console.error("Error fetching task members:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error fetching task members:", error);
+        }
+    }
+
+    const assignTask = async (taskId, userEmail) => {
+        try {
+            const response = await wbsApi.assignTask(taskId, userEmail);
+            if (response.data.success) {
+                toast.success("Task assigned successfully");
+            } else {
+                console.error("Error assigning task:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error assigning task:", error);
+        }
+    }
+
+    const unassignTask = async (taskId, userId) => {
+        try {
+            const response = await wbsApi.unassignTask(taskId, userId);
+            if (response.data.success) {
+                toast.success("Task unassigned successfully");
+            } else {
+                console.error("Error unassigning task:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error unassigning task:", error);
+        }
+    }
+
     useEffect(() => {
         fetchProjectStructure();
     }, [projectId]);
 
 
     return (
-        <ProjectContext.Provider value={{ fetchProjectStructure, projectStructure, createModule, updateModule, deleteModule, createTask, updateTask, deleteTask }}>
+        <ProjectContext.Provider value={{ fetchProjectStructure, projectStructure, createModule, updateModule, deleteModule, createTask, updateTask, deleteTask, getModuleById, getTaskById, getTaskMembers, assignTask, unassignTask }}>
             {props.children}
         </ProjectContext.Provider>
     );

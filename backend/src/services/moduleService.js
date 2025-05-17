@@ -6,6 +6,14 @@ const moduleService = {
         return await Module.find({ parent: projectId });
     },
 
+    getModuleById: async (moduleId) => {
+        const module = await Module.findOne({ _id: moduleId});
+        if (!module) {
+            throw new ResourceNotFoundError("Module not found");
+        }
+        return module;
+    },
+
     createModule: async (projectId, name, description) => {
         return await Module.create({ parent: projectId, name, description });
     },
@@ -28,3 +36,5 @@ const moduleService = {
         await Module.findByIdAndDelete(moduleId);
     }
 };
+
+module.exports = moduleService;

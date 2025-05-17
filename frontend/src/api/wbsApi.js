@@ -3,18 +3,19 @@ import axiosClient from "./axiosClient";
 const wbsApi = {
     getProjectStructure: (projectId) => axiosClient.get(`/projects/${projectId}/structure`),
 
-    createModule: (parentId, module) => axiosClient.post(`/projects/${parentId}/modules`, module),
-    updateModule: (projectId, moduleId, module) => axiosClient.put(`/projects/${projectId}/modules/${moduleId}`, module),
-    deleteModule: (projectId, moduleId) => axiosClient.delete(`/projects/${projectId}/modules/${moduleId}`),
-    getModuleById: (projectId, moduleId) => axiosClient.get(`/projects/${projectId}/modules/${moduleId}`),
+    createModule: (parentId, module) => axiosClient.post(`/modules/projects/${parentId}/modules`, module),
+    updateModule: (moduleId, module) => axiosClient.put(`/modules/${moduleId}`, module),
+    deleteModule: (moduleId) => axiosClient.delete(`/modules/${moduleId}`),
+    getModuleById: (moduleId) => axiosClient.get(`/modules/${moduleId}`),
 
-    createTask: (projectId, moduleId, task) => axiosClient.post(`/projects/${projectId}/modules/${moduleId}/tasks`, task),
-    updateTask: (projectId, moduleId, taskId, task) => axiosClient.put(`/projects/${projectId}/modules/${moduleId}/tasks/${taskId}`, task),
-    deleteTask: (projectId, moduleId, taskId) => axiosClient.delete(`/projects/${projectId}/modules/${moduleId}/tasks/${taskId}`),
-    getTaskById: (projectId, moduleId, taskId) => axiosClient.get(`/projects/${projectId}/modules/${moduleId}/tasks/${taskId}`),
+    createTask: (moduleId, task) => axiosClient.post(`/tasks/create/${moduleId}`, task),
+    updateTask: (taskId, task) => axiosClient.put(`/tasks/${taskId}`, task),
+    deleteTask: (taskId) => axiosClient.delete(`/tasks/${taskId}`),
+    getTaskById: (taskId) => axiosClient.get(`/tasks/${taskId}`),
 
-    assignTask: (projectId, moduleId, taskId, userId) => axiosClient.post(`/projects/${projectId}/modules/${moduleId}/tasks/${taskId}/assign`, { userId }),
-    unassignTask: (projectId, moduleId, taskId, userId) => axiosClient.post(`/projects/${projectId}/modules/${moduleId}/tasks/${taskId}/unassign`, { userId }),
+    getTaskMembers: (taskId) => axiosClient.get(`/taskmembers/tasks/${taskId}/members`),
+    assignTask: (taskId, userEmail) => axiosClient.post(`/taskmembers/tasks/${taskId}/members`, { userEmail }),
+    unassignTask: (taskId, userId) => axiosClient.post(`/taskmembers/tasks/${taskId}/members/${userId}`),
 }
 
 export default wbsApi;

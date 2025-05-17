@@ -10,6 +10,16 @@ exports.getModulesByProject = async (req, res, next) => {
     }
 };
 
+exports.getModuleById = async (req, res, next) => {
+    try {
+        const { moduleId } = req.params;
+        const module = await moduleService.getModuleById(moduleId);
+        res.status(200).json({ success: true, data: module });
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.createModule = async (req, res, next) => {
     try {
         const { projectId } = req.params;

@@ -3,7 +3,7 @@ const Module = require('../models/Module');
 const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 
 const taskService = {
-    createTask: async (moduleId, name, description, start_date, due_date, priority) => {
+    createTask: async (moduleId, name, description, start_date, due_date) => {
         const module = await Module.findById(moduleId);
         if (!module) {
             throw new ResourceNotFoundError("Module not found");
@@ -15,7 +15,7 @@ const taskService = {
             description,
             start_date,
             due_date,
-            priority
+            status: 'to-do',
         });
     },
 
