@@ -5,13 +5,15 @@ import projectApi from "../api/projectApi";
 
 function HomePage() {
   const [message, setMessage] = useState("");
+  const [onRefesh, setOnRefresh] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
   const [project, setProject] = useState({
+    id: "",
     title: "",
     description: "",
     start_date: "",
     due_date: "",
-    status: "In Progress",
     members: [],
   });
 
@@ -43,6 +45,7 @@ function HomePage() {
 
   const resetForm = () => {
     setProject({
+      id: "",
       title: "",
       description: "",
       start_date: "",
@@ -92,7 +95,7 @@ function HomePage() {
   return (
     <>
       <div className='h-[calc(100vh-4rem)]'>
-        <ProjectFolder onAddNewClick={() => setShowModal(true)} />
+        <ProjectFolder onAddNewClick={() => setShowModal(true)} onRefesh={onRefesh} setOnRefresh={setOnRefresh} setProject={setProject} onUpdateClick={() => {setShowModal(true); setIsUpdate(true)}}/>
       </div>
 
       <AddProjectModal
@@ -103,6 +106,8 @@ function HomePage() {
         onCreateProject={handleCreateProject}
         onAddMember={handleAddMember}
         onRemoveMember={handleRemoveMember}
+        onUpdateProject={() => handleUpdateProject(project.id)}
+        idUpdate={isUpdate}
       />
     </>
   );

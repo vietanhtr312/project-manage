@@ -72,7 +72,7 @@ const projectMemberService = {
 
     getProjectMembers: async (projectId) => {
         try {
-            const projectMembers = await ProjectMember.find({ project: projectId })
+            const projectMembers = await ProjectMember.find({ project: projectId, role: { $ne: 'leader' } })
                 .populate("member", "name email")
                 .select('member role');
             if (!projectMembers) throw new ResourceNotFoundError("This project doesn't have members");

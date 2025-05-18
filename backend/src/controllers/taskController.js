@@ -1,5 +1,6 @@
 const taskService = require('../services/taskService');
 const taskMemberService = require('../services/taskMemberService');
+const Task = require('../models/Task');
 
 exports.createTask = async (req, res, next) => {
     try {
@@ -51,21 +52,22 @@ exports.deleteTask = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-  
-  exports.getTaskDetails = async (req, res) => {
+};
+
+exports.getTaskDetails = async (req, res) => {
     try {
         const task = await Task.findById(req.params.id);
         if (!task) {
-        return res.status(404).json({ error: 'Không tìm thấy task' });
+            return res.status(404).json({ error: 'Không tìm thấy task' });
         }
 
         res.json({
-        id: task._id,
-        name: task.name,
-        description: task.description,
-        start_date: task.start_date,
-        due_date: task.due_date,
-        status: task.status
+            id: task._id,
+            name: task.name,
+            description: task.description,
+            start_date: task.start_date,
+            due_date: task.due_date,
+            status: task.status
         });
     } catch (err) {
         res.status(500).json({ error: 'Lỗi server' });

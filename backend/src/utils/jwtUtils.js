@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 // Get JWT secret from environment variables
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'; 
-const JWT_EXPIRATION_TIME = '1d'; // Token expires in 1 day
+const JWT_EXPIRATION_TIME = '30d'; // Token expires in 1 day
 
 const tokenUtils = {
     /**

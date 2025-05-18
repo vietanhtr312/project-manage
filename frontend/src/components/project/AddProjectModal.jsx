@@ -1,13 +1,15 @@
 import React from "react";
 
-function AddProjectModal({ 
-  show, 
-  onClose, 
-  project, 
-  onInputChange, 
-  onCreateProject, 
-  onAddMember, 
-  onRemoveMember 
+function AddProjectModal({
+  show,
+  onClose,
+  project,
+  onInputChange,
+  onCreateProject,
+  onAddMember,
+  onRemoveMember,
+  onUpdateProject,
+  idUpdate,
 }) {
   if (!show) return null;
 
@@ -16,7 +18,7 @@ function AddProjectModal({
       <div className="bg-white w-full max-w-md rounded-md shadow-lg">
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-xl font-semibold text-blue-900">Add New Project</h2>
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
           >
@@ -43,7 +45,7 @@ function AddProjectModal({
                 <input
                   type="date"
                   name="start_date"
-                  value={project.start_date}
+                  value={project.start_date ? project.start_date.slice(0, 10) : ''}
                   onChange={onInputChange}
                   className="w-full p-2 border rounded-md"
                   placeholder="Select date"
@@ -56,7 +58,7 @@ function AddProjectModal({
                 <input
                   type="date"
                   name="due_date"
-                  value={project.due_date}
+                  value={project.due_date ? project.due_date.slice(0, 10) : ''}
                   onChange={onInputChange}
                   className="w-full p-2 border rounded-md"
                   placeholder="Select date"
@@ -87,21 +89,25 @@ function AddProjectModal({
                 type="text"
                 placeholder="@member"
                 className="w-full p-2 pl-10 border rounded-md"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    onAddMember(e.target.value);
-                    e.target.value = '';
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    const value = e.target.value.trim();
+                    if (value) {
+                      onAddMember(value);
+                      e.target.value = '';
+                    }
                   }
                 }}
               />
             </div>
-            
+
             {project.members.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {project.members.map((member, index) => (
                   <div key={index} className="bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full flex items-center">
                     {member}
-                    <button 
+                    <button
                       onClick={() => onRemoveMember(member)}
                       className="ml-1 text-blue-600 hover:text-blue-800"
                     >
@@ -113,28 +119,6 @@ function AddProjectModal({
             )}
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <div className="relative">
-              <select
-                name="status"
-                value={project.status}
-                onChange={onInputChange}
-                className="w-full p-2 border rounded-md appearance-none"
-              >
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-                <option value="On Hold">On Hold</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
           <div className="flex justify-end space-x-2 mt-6">
             <button
               onClick={onClose}
@@ -143,10 +127,17 @@ function AddProjectModal({
               Cancel
             </button>
             <button
-              onClick={onCreateProject}
+              onClick={() => {
+                if (idUpdate) {
+                  onUpdateProject(idUpdate);
+                } else {
+                  onCreateProject();
+                }
+                onClose();
+              }}
               className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
             >
-              Create
+              {idUpdate ? "Update" : "Create"}
             </button>
           </div>
         </div>

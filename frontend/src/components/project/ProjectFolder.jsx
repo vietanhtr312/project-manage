@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { AppContext } from "../../context/AppContext";
 import ProjectCard from "./ProjectCard";
 import projectApi from "../../api/projectApi";
 
-const ProjectFolder = ({ onAddNewClick }) => { // Thêm prop onAddNewClick
+const ProjectFolder = ({ onAddNewClick, onRefresh, setOnRefresh, setProject, onUpdateClick }) => { // Thêm prop onAddNewClick
   const { userData, backendUrl, token, projectId, setProjectId } =
     useContext(AppContext);
   const [projects, setProjects] = useState([]);
@@ -30,9 +29,10 @@ const ProjectFolder = ({ onAddNewClick }) => { // Thêm prop onAddNewClick
     }
   };
 
-  // useEffect(() => {
-  //     handlefetchProjects();
-  // }, [userData]);
+  useEffect(() => {
+    handlefetchProjects();
+    setOnRefresh(false);
+  }, [token, onRefresh === true]);
 
   const fetchProjectDetails = async (projectId) => {
     try {
@@ -44,6 +44,22 @@ const ProjectFolder = ({ onAddNewClick }) => { // Thêm prop onAddNewClick
     }
   };
 
+  const handleUpdateProject = async () => {
+    setProject({
+      id: projectId,
+      title: projectDetails.title,
+      description: projectDetails.description,
+      start_date: projectDetails.start_date,
+      due_date: projectDetails.due_date,
+      status: projectDetails.status,
+      members: projectDetails.members.map((member) => (
+        member.email
+      )),
+    });
+    onUpdateClick(projectId);
+  };
+
+
   const navigate = useNavigate();
 
   const handleManageClick = () => {
@@ -54,7 +70,7 @@ const ProjectFolder = ({ onAddNewClick }) => { // Thêm prop onAddNewClick
   const AddNewProjectCard = () => (
     <div className="relative flex flex-col justify-center items-center w-64 h-40 mb-16 bg-white rounded-2xl rounded-tl-none shadow-md">
       <div className="absolute left-0 top-[-40px] bg-white rounded-2xl rounded-b-none cursor-pointer group-hover:bg-gray-300 h-10 w-28"></div>
-      <button 
+      <button
         className="text-black py-2 px-4 rounded-lg bg-blue-300 hover:bg-blue-500 hover:text-white"
         onClick={onAddNewClick} // Thêm sự kiện onClick gọi đến onAddNewClick
       >
@@ -65,6 +81,7 @@ const ProjectFolder = ({ onAddNewClick }) => { // Thêm prop onAddNewClick
 
   return (
     <div className="h-full w-full bg-white/10 py-20 pl-10 pr-0 flex">
+
       <div className="w-3/4 flex flex-row flex-wrap items-center mb-4 gap-8">
         {projects &&
           projects.length > 0 &&
@@ -86,7 +103,7 @@ const ProjectFolder = ({ onAddNewClick }) => { // Thêm prop onAddNewClick
               onClick={handleManageClick}
               className="h-10 text-black py-2 pl-4 pr-2 rounded-lg bg-green-100 hover:bg-green-500 hover:text-white flex items-center"
             >
-              <span className="mb-1" onClick={() => {}}>
+              <span className="mb-1" onClick={() => { }}>
                 Manage
               </span>
               <ChevronRight />
@@ -125,9 +142,18 @@ const ProjectFolder = ({ onAddNewClick }) => { // Thêm prop onAddNewClick
                   <span className="font-semibold">Owner:</span>{" "}
                   {projectDetails?.leader?.name}
                 </p>
+                <p className="text-left my-2 text-gray-500">
+                  <span className="font-semibold">Members:</span>{" "}
+                  {projectDetails?.members?.map((member, index) => (
+                    <span key={index}>
+                      {member.name}
+                      {index < projectDetails.members.length - 1 ? ", " : ""}
+                    </span>
+                  ))}
+                </p>
               </div>
               <div className="mt-auto mb-10 flex flex-row gap-10">
-                <button className="text-black py-2 px-4 rounded-lg bg-yellow-100 hover:bg-yellow-500 hover:text-white">
+                <button className="text-black py-2 px-4 rounded-lg bg-yellow-100 hover:bg-yellow-500 hover:text-white" onClick={handleUpdateProject}>
                   Update
                 </button>
                 <button className="text-black py-2 px-4 rounded-lg bg-red-100 hover:bg-red-500 hover:text-white">

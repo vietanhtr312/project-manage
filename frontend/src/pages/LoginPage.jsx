@@ -17,6 +17,7 @@ export const LoginPage = () => {
 
       setUser(response.data.user);
       setToken(response.data.token);
+      localStorage.setItem("token", response.data.token);
       navigate("/");
     } catch (error) {
       const errorMsg =

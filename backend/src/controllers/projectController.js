@@ -3,6 +3,7 @@ const projectMemberService = require('../services/projectMemberService');
 const MissingFieldError = require('../errors/MissingFieldError');
 const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 const UserAlreadyExistsError = require('../errors/UserAlreadyExistsError');
+const User = require('../models/User');
 
 const projectController = {
     getProjectById: async (req, res, next) => {
@@ -41,11 +42,49 @@ const projectController = {
             const { id } = req.params;
             const { title, description, start_date, due_date } = req.body;
             const updatedProject = await projectService.updateProject(id, title, description, start_date, due_date);
+
+            // update project members
+            const projectMembers = await projectMemberService.getProjectMembers(id);
+            const members = req.body.members || [];
+            if (members.length > 0) {
+                const existingMembers = projectMembers.members.map(member => member.email.toString());
+                const newMembers = members.filter(member => !existingMembers.includes(member));
+
+                if (newMembers.length > 0) {
+                    for (const member of newMembers) {
+                        const memberId = await User.findOne({ email: member });
+                        if (!memberId) {
+                            throw new ResourceNotFoundError("User not found");
+                        }
+                        await projectMemberService.addProjectMember(id, memberId);
+                    }
+                }
+            }
+
+            // remove project members
+            const removedMembers = projectMembers.members.filter(member => !members.includes(member.email));
+            if (removedMembers.length > 0) {
+                for (const member of removedMembers) {
+                    const memberId = await
+                        User.findOne({ email: member.email });
+                    if (!memberId) {
+                        throw new ResourceNotFoundError("User not found");
+                    }
+                    await projectMemberService.removeProjectMember(id, memberId);
+                }
+            }
+
+
             return res.status(200).json({
                 success: true,
                 message: 'Updated Successfully',
                 data: {
-                    id: updatedProject.id
+                    id: updatedProject.id,
+                    title: updatedProject.title,
+                    description: updatedProject.description,
+                    start_date: updatedProject.start_date,
+                    due_date: updatedProject.due_date,
+                    status: updatedProject.status
                 }
             })
         } catch (error) {
@@ -167,7 +206,7 @@ const projectController = {
                 data: project,
             });
         } catch (error) {
-            next(error); 
+            next(error);
         }
     },
 };
