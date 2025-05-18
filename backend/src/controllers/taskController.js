@@ -4,7 +4,7 @@ const taskMemberService = require('../services/taskMemberService');
 exports.createTask = async (req, res, next) => {
     try {
         const { moduleId } = req.params;
-        const { name, description, start_date, due_date} = req.body;
+        const { name, description, start_date, due_date } = req.body;
         const task = await taskService.createTask(moduleId, name, description, start_date, due_date);
         res.status(201).json({ success: true, data: task });
     } catch (error) {
