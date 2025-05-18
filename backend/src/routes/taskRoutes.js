@@ -13,5 +13,6 @@ router.delete('/:id', taskController.deleteTask);
 router.post('/:id/members', taskController.assignTaskMember);
 router.get('/:id/members', taskController.getTaskMembers);
 router.delete('/:id/members/:userId', taskController.removeTaskMember);
+router.get('/tasks/:id', taskController.getTaskDetails);
 
 module.exports = router;
