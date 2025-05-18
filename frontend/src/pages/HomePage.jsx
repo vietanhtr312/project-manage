@@ -1,16 +1,27 @@
 import React, { useState } from "react";
 import ProjectFolder from "../components/project/ProjectFolder";
+import AddProjectModal from "../components/project/AddProjectModal";
 import projectApi from "../api/projectApi";
 
 function HomePage() {
   const [message, setMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const [project, setProject] = useState({
     title: "",
     description: "",
     start_date: "",
     due_date: "",
+    status: "In Progress",
     members: [],
   });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProject(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleCreateProject = async () => {
     try {
@@ -19,13 +30,27 @@ function HomePage() {
         description: project.description,
         start_date: project.start_date,
         due_date: project.due_date,
-        members: [],
+        status: project.status,
+        members: project.members,
       });
       setMessage(response.data.message);
+      setShowModal(false);
+      resetForm();
     } catch (error) {
       console.error("Error creating project:", error);
     }
-  }
+  };
+
+  const resetForm = () => {
+    setProject({
+      title: "",
+      description: "",
+      start_date: "",
+      due_date: "",
+      status: "In Progress",
+      members: [],
+    });
+  };
 
   const handleUpdateProject = async (projectId) => {
     try {
@@ -34,19 +59,53 @@ function HomePage() {
         description: project.description,
         start_date: project.start_date,
         due_date: project.due_date,
-        members: [],
+        status: project.status,
+        members: project.members,
       });
       setMessage(response.data.message);
     } catch (error) {
       console.error("Error updating project:", error);
     }
-  }
+  };
 
-  return <>
-    <div className='h-[calc(100vh-4rem)]'>
-      <ProjectFolder />
-    </div>
-  </>;
+  const handleAddMember = (member) => {
+    if (member && !project.members.includes(member)) {
+      setProject(prev => ({
+        ...prev,
+        members: [...prev.members, member]
+      }));
+    }
+  };
+
+  const handleRemoveMember = (member) => {
+    setProject(prev => ({
+      ...prev,
+      members: prev.members.filter(m => m !== member)
+    }));
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    resetForm();
+  };
+
+  return (
+    <>
+      <div className='h-[calc(100vh-4rem)]'>
+        <ProjectFolder onAddNewClick={() => setShowModal(true)} />
+      </div>
+
+      <AddProjectModal
+        show={showModal}
+        onClose={handleCloseModal}
+        project={project}
+        onInputChange={handleInputChange}
+        onCreateProject={handleCreateProject}
+        onAddMember={handleAddMember}
+        onRemoveMember={handleRemoveMember}
+      />
+    </>
+  );
 }
 
 export default HomePage;
