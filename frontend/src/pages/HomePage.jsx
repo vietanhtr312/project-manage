@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import ProjectFolder from "../components/project/ProjectFolder";
 import AddProjectModal from "../components/project/AddProjectModal";
 import projectApi from "../api/projectApi";
+import { AppContext } from "../context/AppContext";
 
 function HomePage() {
   const [message, setMessage] = useState("");
-  const [onRefesh, setOnRefresh] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [project, setProject] = useState({
@@ -16,6 +16,8 @@ function HomePage() {
     due_date: "",
     members: [],
   });
+
+  const {setOnRefresh} = useContext(AppContext);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,6 +38,7 @@ function HomePage() {
         members: project.members,
       });
       setMessage(response.data.message);
+      setOnRefresh(true);
       setShowModal(false);
       resetForm();
     } catch (error) {
@@ -66,6 +69,10 @@ function HomePage() {
         members: project.members,
       });
       setMessage(response.data.message);
+      setIsUpdate(false);
+      setOnRefresh(true);
+      setShowModal(false);
+      resetForm();
     } catch (error) {
       console.error("Error updating project:", error);
     }
@@ -94,8 +101,8 @@ function HomePage() {
 
   return (
     <>
-      <div className='h-[calc(100vh-4rem)]'>
-        <ProjectFolder onAddNewClick={() => setShowModal(true)} onRefesh={onRefesh} setOnRefresh={setOnRefresh} setProject={setProject} onUpdateClick={() => {setShowModal(true); setIsUpdate(true)}}/>
+      <div className=''>
+        <ProjectFolder onAddNewClick={() => setShowModal(true)} setProject={setProject} onUpdateClick={() => {setShowModal(true); setIsUpdate(true)}}/>
       </div>
 
       <AddProjectModal

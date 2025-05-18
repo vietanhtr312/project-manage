@@ -13,6 +13,7 @@ router.post('/modules/:moduleId/tasks', taskController.createTask);
 router.get('/tasks/:id', taskController.getTaskDetails);
 
 router.get('/:id', taskController.getTaskById);
+router.post('/create/:moduleId', taskController.createTask);
 router.put('/:id', taskController.updateTask);
 router.delete('/:id', taskController.deleteTask);
 

@@ -13,6 +13,7 @@ export const ProjectContextProvider = (props) => {
     try {
       const response = await wbsApi.getProjectStructure(projectId);
       if (response.data.success) {
+
         setProjectStructure(response.data.data);
       } else {
         console.error("Error fetching project structure:", response.statusText);
@@ -35,11 +36,33 @@ export const ProjectContextProvider = (props) => {
     }
   };
 
-  const createModule = async (parentId, module) => {
+  const createModule = async (parentId, module, submodule) => {
     try {
       const response = await wbsApi.createModule(parentId, module);
       if (response.data.success) {
-        setProjectStructure((prev) => [...prev, response.data.data]);
+        if (submodule) {
+          setProjectStructure((prev) => {
+            const updatedModules = prev.modules.map((item) => {
+              if (item._id === parentId) {
+                return {
+                  ...item,
+                  submodules: [...(item.submodules || []), response.data.data],
+                };
+              }
+              return item;
+            });
+
+            return {
+              ...prev,
+              modules: updatedModules,
+            };
+          });
+        } else {
+          setProjectStructure((prev) => ({
+            ...prev,
+            modules: [...(prev.modules || []), response.data.data],
+          }));
+        }
       } else {
         console.error("Error creating module:", response.statusText);
       }
@@ -48,13 +71,54 @@ export const ProjectContextProvider = (props) => {
     }
   };
 
-  const updateModule = async (moduleId, module) => {
+  const updateModule = async (moduleId, module, parentId) => {
     try {
       const response = await wbsApi.updateModule(moduleId, module);
       if (response.data.success) {
-        setProjectStructure((prev) =>
-          prev.map((item) => (item.id === moduleId ? response.data.data : item))
-        );
+        if (parentId) {
+          setProjectStructure((prev) => {
+            const updatedModules = prev.modules.map((item) => {
+              if (item._id === parentId) {
+                const updatedSubmodules = (item.submodules || []).map((submodule) => {
+                  if (submodule._id === moduleId) {
+                    return {
+                      ...submodule,
+                      name: module.name,
+                      description: module.description,
+                    };
+                  }
+                  return submodule;
+                }
+                );
+                return {
+                  ...item,
+                  submodules: updatedSubmodules,
+                };
+              }
+              return item;
+            });
+            return {
+              ...prev,
+              modules: updatedModules,
+            };
+          });
+        } else {
+          setProjectStructure((prev) =>
+          ({
+            ...prev,
+            modules: prev.modules.map((item) => {
+              if (item._id === moduleId) {
+                return {
+                  ...item,
+                  name: module.name,
+                  description: module.description,
+                };
+              }
+              return item;
+            }),
+          })
+          );
+        }
       } else {
         console.error("Error updating module:", response.statusText);
       }
@@ -63,13 +127,34 @@ export const ProjectContextProvider = (props) => {
     }
   };
 
-  const deleteModule = async (moduleId) => {
+  const deleteModule = async (moduleId, parentId) => {
     try {
       const response = await wbsApi.deleteModule(moduleId);
       if (response.data.success) {
-        setProjectStructure((prev) =>
-          prev.filter((item) => item.id !== moduleId)
-        );
+        if (parentId) {
+          setProjectStructure((prev) => {
+            const updatedModules = prev.modules.map((item) => {
+              if (item._id === parentId) {
+                const updatedSubmodules = (item.submodules || []).filter((submodule) => submodule._id !== moduleId);
+                return {
+                  ...item,
+                  submodules: updatedSubmodules,
+                };
+              }
+              return item;
+            });
+
+            return {
+              ...prev,
+              modules: updatedModules,
+            };
+          });
+        } else {
+          setProjectStructure((prev) => ({
+            ...prev,
+            modules: prev.modules.filter((item) => item._id !== moduleId),
+          }));
+        }
       } else {
         console.error("Error deleting module:", response.statusText);
       }
@@ -91,17 +176,51 @@ export const ProjectContextProvider = (props) => {
     }
   };
 
-  const createTask = async (moduleId, task) => {
+  const createTask = async (moduleId, task, parentId) => {
     try {
       const response = await wbsApi.createTask(moduleId, task);
       if (response.data.success) {
-        setProjectStructure((prev) =>
-          prev.map((item) =>
-            item.id === moduleId
-              ? { ...item, tasks: [...item.tasks, response.data.data] }
-              : item
-          )
-        );
+        if (parentId) {
+          setProjectStructure((prev) => {
+            const updatedModules = prev.modules.map((item) => {
+              if (item._id === parentId) {
+                const updatedSubmodules = (item.submodules || []).map((submodule) => {
+                  if (submodule._id === moduleId) {
+                    return {
+                      ...submodule,
+                      tasks: [...(submodule.tasks || []), response.data.data],
+                    };
+                  }
+                  return submodule;
+                });
+
+                return {
+                  ...item,
+                  submodules: updatedSubmodules,
+                };
+              }
+              return item;
+            });
+
+            return {
+              ...prev,
+              modules: updatedModules,
+            };
+          });
+        } else {
+          setProjectStructure((prev) => ({
+            ...prev,
+            modules: prev.modules.map((item) => {
+              if (item._id === moduleId) {
+                return {
+                  ...item,
+                  tasks: [...(item.tasks || []), response.data.data],
+                };
+              }
+              return item;
+            }),
+          }));
+        }
       } else {
         console.error("Error creating task:", response.statusText);
       }
@@ -110,51 +229,139 @@ export const ProjectContextProvider = (props) => {
     }
   };
 
-  // const updateTask = async (taskId, task) => {
-  //     try {
-  //         const response = await wbsApi.updateTask(taskId, task);
-  //         if (response.data.success) {
-  //             setProjectStructure((prev) =>
-  //                 prev.map((item) =>
-  //                     item.id === moduleId
-  //                         ? {
-  //                             ...item,
-  //                             tasks: item.tasks.map((t) =>
-  //                                 t.id === taskId ? response.data.data : t
-  //                             ),
-  //                         }
-  //                         : item
-  //                 )
-  //             );
-  //         } else {
-  //             console.error("Error updating task:", response.statusText);
-  //         }
-  //     } catch (error) {
-  //         console.error("Error updating task:", error);
-  //     }
-  // }
+  const updateTask = async (taskId, task, moduleId, parentId) => {
+    try {
+      const response = await wbsApi.updateTask(taskId, task);
+      if (response.data.success) {
+        if (parentId) {
+          setProjectStructure((prev) => {
+            const updatedModules = prev.modules.map((item) => {
+              if (item._id === parentId) {
+                const updatedSubmodules = (item.submodules || []).map((submodule) => {
+                  if (submodule._id === moduleId) {
+                    const updatedTasks = (submodule.tasks || []).map((t) => {
+                      if (t._id === taskId) {
+                        return {
+                          ...t,
+                          name: task.name,
+                          description: task.description,
+                          start_date: task.start_date,
+                          due_date: task.due_date,
+                        };
+                      }
+                      return t;
+                    });
+                    return {
+                      ...submodule,
+                      tasks: updatedTasks,
+                    };
+                  }
+                  return submodule;
+                });
 
-  // const deleteTask = async (taskId) => {
-  //     try {
-  //         const response = await wbsApi.deleteTask(taskId);
-  //         if (response.data.success) {
-  //             setProjectStructure((prev) =>
-  //                 prev.map((item) =>
-  //                     item.id === moduleId
-  //                         ? {
-  //                             ...item,
-  //                             tasks: item.tasks.filter((t) => t.id !== taskId),
-  //                         }
-  //                         : item
-  //                 )
-  //             );
-  //         } else {
-  //             console.error("Error deleting task:", response.statusText);
-  //         }
-  //     } catch (error) {
-  //         console.error("Error deleting task:", error);
-  //     }
-  // }
+                return {
+                  ...item,
+                  submodules: updatedSubmodules,
+                };
+              }
+              return item;
+            });
+
+            return {
+              ...prev,
+              modules: updatedModules,
+            };
+          });
+        } else {
+          setProjectStructure((prev) =>
+          ({
+            ...prev,
+            modules: prev.modules.map((item) => {
+              if (item._id === moduleId) {
+                const updatedTasks = (item.tasks || []).map((t) => {
+                  if (t._id === taskId) {
+                    return {
+                      ...t,
+                      name: task.name,
+                      description: task.description,
+                      start_date: task.start_date,
+                      due_date: task.due_date,
+                    };
+                  }
+                  return t;
+                });
+                return {
+                  ...item,
+                  tasks: updatedTasks,
+                };
+              }
+              return item;
+            }),
+          })
+          );
+        }
+      } else {
+        console.error("Error updating task:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
+  }
+
+  const deleteTask = async (taskId, moduleId, parentId) => {
+    try {
+      const response = await wbsApi.deleteTask(taskId);
+      if (response.data.success) {
+        if (parentId) {
+          setProjectStructure((prev) => {
+            const updatedModules = prev.modules.map((item) => {
+              if (item._id === parentId) {
+                const updatedSubmodules = (item.submodules || []).map((submodule) => {
+                  if (submodule._id === moduleId) {
+                    const updatedTasks = (submodule.tasks || []).filter((task) => task._id !== taskId);
+                    return {
+                      ...submodule,
+                      tasks: updatedTasks,
+                    };
+                  }
+                  return submodule;
+                });
+
+                return {
+                  ...item,
+                  submodules: updatedSubmodules,
+                };
+              }
+              return item;
+            });
+
+            return {
+              ...prev,
+              modules: updatedModules,
+            };
+          });
+        } else {
+          setProjectStructure((prev) => ({
+            ...prev,
+            modules: prev.modules.map((item) => {
+              if (item._id === moduleId) {
+                const updatedTasks = (item.tasks || []).filter((task) => task._id !== taskId);
+                return {
+                  ...item,
+                  tasks: updatedTasks,
+                };
+              }
+              return item;
+            }),
+          }));
+        }
+      } else {
+        console.error("Error deleting task:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  }
 
   const getTaskMembers = async (taskId) => {
     try {
@@ -196,7 +403,9 @@ export const ProjectContextProvider = (props) => {
   };
 
   useEffect(() => {
-    fetchProjectStructure();
+    if (projectId) {
+      fetchProjectStructure();
+    }
   }, [projectId]);
 
   return (
@@ -208,6 +417,8 @@ export const ProjectContextProvider = (props) => {
         updateModule,
         deleteModule,
         createTask,
+        updateTask,
+        deleteTask,
         getModuleById,
         getTaskById,
         getTaskMembers,

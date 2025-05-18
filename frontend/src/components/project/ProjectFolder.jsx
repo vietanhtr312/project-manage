@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import ProjectCard from "./ProjectCard";
 import projectApi from "../../api/projectApi";
+import useUserStore from "../../store/userStore";
 
-const ProjectFolder = ({ onAddNewClick, onRefresh, setOnRefresh, setProject, onUpdateClick }) => { // Thêm prop onAddNewClick
-  const { userData, backendUrl, token, projectId, setProjectId } =
-    useContext(AppContext);
-  const [projects, setProjects] = useState([]);
+const ProjectFolder = ({ onAddNewClick, setProject, onUpdateClick }) => { 
+  const { projectId, setProjectId, projects, setProjects, onRefresh, setOnRefresh } = useContext(AppContext);
   const [projectDetails, setProjectDetails] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+
+  const user = useUserStore((state) => state.user);
 
   useEffect(() => {
     if (projectId) {
@@ -21,7 +22,7 @@ const ProjectFolder = ({ onAddNewClick, onRefresh, setOnRefresh, setProject, onU
 
   const handlefetchProjects = async () => {
     try {
-      const response = await projectApi.getProjects(userData._id);
+      const response = await projectApi.getProjects(user.id);
       if (response.data.success) setProjects(response.data.data);
       else console.error(response.data.message);
     } catch (error) {
@@ -30,9 +31,9 @@ const ProjectFolder = ({ onAddNewClick, onRefresh, setOnRefresh, setProject, onU
   };
 
   useEffect(() => {
-    handlefetchProjects();
-    setOnRefresh(false);
-  }, [token, onRefresh === true]);
+      handlefetchProjects();
+      setOnRefresh(false);
+  }, [onRefresh]); 
 
   const fetchProjectDetails = async (projectId) => {
     try {
