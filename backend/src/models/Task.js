@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const TaskStatus = {
-	TO_DO : 'to-do',
+	TO_DO: 'to-do',
 	IN_PROGRESS: 'in-progress',
-	DONE : 'done'
+	DONE: 'done'
 }
 
 const TaskSchema = new mongoose.Schema({
@@ -30,6 +30,9 @@ const TaskSchema = new mongoose.Schema({
 		type: String,
 		enum: Object.values(TaskStatus),
 		default: TaskStatus.TO_DO
+	},
+	progress: {
+		type: Number,
 	}
 }, { timestamps: true });
 
