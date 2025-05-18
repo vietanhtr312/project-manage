@@ -1,22 +1,18 @@
+const Task = require('../models/Task');
 const PermissionDeniedError = require('../errors/PermissionDeniedError');
-const ProjectMember = require('../models/ProjectMember');
 
-const taskMiddleware = {
-    verifyTaskOwnership: async (req, res, next) => {
-        try {
-            const { user } = req;
-            const { id } = req.params;
-            const task = await Task.findById(id);
-            if (!task) throw new ResourceNotFoundError("Task not found");
+exports.requireTaskOwner = async (req, res, next) => {
+    const { id } = req.params;
+    const userId = req.user.id;
 
-            const isOwner = task.user_id.equals(user.id);
-            if (!isOwner) throw new PermissionDeniedError("Not authorized to modify this task");
-
-            next();
-        } catch (error) {
-            next(error);
-        }
+    const task = await Task.findById(id);
+    if (!task) {
+        throw new PermissionDeniedError("Task not found");
     }
-};
 
-module.exports = taskMiddleware;
+    if (task.createdBy.toString() !== userId) {
+        throw new PermissionDeniedError("Only the task owner can modify this task");
+    }
+
+    next();
+};

@@ -14,4 +14,6 @@ router.get('/:id/members', roleMiddleware.requireProjectMember, projectControlle
 router.post('/:id/members', roleMiddleware.requireProjectLeader, projectController.addMember)
 router.delete('/:id/members/:userId', roleMiddleware.requireProjectLeader, projectController.removeMember)
 
+router.get('/:projectId/structure', projectController.getProjectStructure);
+
 module.exports = router;

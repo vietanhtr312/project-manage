@@ -120,21 +120,33 @@ const projectController = {
                 })
             }
             if (role === "all") {
-                const [ledProjects, participatedProjects] = await Promise.allSettled([
-                    projectMemberService.getLedProjects(userId),
-                    projectMemberService.getParticipatedProjects(userId)
+                const projectsResult = await Promise.allSettled([
+                    projectMemberService.getAllProjects(userId),
                 ]);
-                if (ledProjects.status === 'rejected' && participatedProjects.status === 'rejected') {
+
+                const fulfilled = projectsResult.find(p => p.status === 'fulfilled');
+
+                if (!fulfilled || !fulfilled.value) {
                     throw new ResourceNotFoundError("Project not found");
                 }
-                
+
+                const projects = fulfilled.value;
+
+                const now = new Date();
+                const result = projects.map(pm => {
+                    const dueDate = new Date(pm.project.due_date || now);
+                    const isComplete = dueDate < now;
+
+                    return {
+                        ...pm.toObject(),
+                        status: isComplete ? 'complete' : 'in progress'
+                    };
+                });
+
                 res.status(200).json({
                     success: true,
                     message: "All projects fetched",
-                    data: {
-                        ledProjects: ledProjects.value || [] , 
-                        participatedProjects: participatedProjects.value || []
-                    }
+                    data: result
                 });
             }
 
@@ -142,7 +154,22 @@ const projectController = {
         catch (error) {
             next(error)
         }
-    }
+    },
+
+    getProjectStructure: async (req, res, next) => {
+        try {
+            const { projectId } = req.params;
+            const project = await projectService.getProjectStructure(projectId);
+
+            res.status(200).json({
+                success: true,
+                message: 'Project detail fetched successfully',
+                data: project,
+            });
+        } catch (error) {
+            next(error); 
+        }
+    },
 };
 
 module.exports = projectController;
