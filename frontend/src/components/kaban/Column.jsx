@@ -6,7 +6,11 @@ const Column = ({ title, tasks }) => {
       <h3 className="font-bold text-blue-800 mb-4 text-sm">{title}</h3>
       <div className="space-y-4">
         {tasks.map((task) => (
-          <TaskCard key={task.id} title={task.title} progress={task.progress} />
+          <TaskCard
+            key={task._id}
+            title={task.name}
+            progress={task.progress || 0}
+          />
         ))}
       </div>
     </div>

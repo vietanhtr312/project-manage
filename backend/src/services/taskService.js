@@ -2,21 +2,24 @@ const Task = require('../models/Task');
 const Module = require('../models/Module');
 const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 
-const getAllModulesByParent = async (parentId) => {
-    const result = [];
+const getAllModuleIdsFromParent = async (parentId) => {
+    const allIds = [];
     const queue = [parentId];
+
 
     while (queue.length > 0) {
         const current = queue.shift();
-        result.push(current);
+        allIds.push(current);
 
         const children = await Module.find({ parent: current }).select('_id');
         for (const child of children) {
             queue.push(child._id.toString());
         }
     }
+    console.log(allIds);
 
-    return result;
+
+    return allIds;
 };
 
 const taskService = {
@@ -67,9 +70,18 @@ const taskService = {
     },
 
     getTasksByProjectId: async (projectId) => {
-        const moduleIds = await getAllModulesByParent(projectId);
+        // Tìm các module gốc của project
+        const rootModules = await Module.find({ parent: projectId }).select('_id');
+        if (!rootModules.length) return [];
 
-        const tasks = await Task.find({ module: { $in: moduleIds } });
+        let allModuleIds = [];
+        for (const mod of rootModules) {
+            const ids = await getAllModuleIdsFromParent(mod._id.toString());
+            allModuleIds = allModuleIds.concat(ids);
+        }
+
+        // Truy vấn tất cả task theo moduleIds
+        const tasks = await Task.find({ module: { $in: allModuleIds } });
 
         return tasks;
     }

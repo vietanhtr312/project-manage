@@ -2,7 +2,7 @@ import React from "react";
 import { PenLine, Trash } from "lucide-react";
 import { Progress } from "antd";
 
-export const TaskCard = ({ title = "Task 1", progress = 45 }) => {
+export const TaskCard = ({ title, progress }) => {
   const getColor = () => {
     if (progress === 100) return "#52c41a";
     if (progress < 30) return "#ff4d4f";

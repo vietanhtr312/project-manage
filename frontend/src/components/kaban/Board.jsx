@@ -1,25 +1,57 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Column from "./Column";
+import kabanApi from "../../api/kabanApi";
+import { AppContext } from "../../context/AppContext";
+import { toast } from "react-toastify";
 
 export const Board = () => {
-  const boardData = {
-    Todo: [
-      { id: 1, title: "ITSS1", progress: 10 },
-      { id: 2, title: "Task1", progress: 30 },
-      { id: 3, title: "Task3", progress: 5 },
-    ],
-    Doing: [
-      { id: 4, title: "Phát triển API", progress: 60 },
-      { id: 5, title: "Kết nối frontend", progress: 40 },
-    ],
-    Done: [
-      { id: 4, title: "Phát triển API", progress: 100 },
-      { id: 5, title: "Kết nối frontend", progress: 100 },
-    ],
+  const { projectId } = useContext(AppContext);
+  console.log(projectId);
+
+  const [kanbanData, setKanbanData] = useState({
+    Todo: [],
+    Doing: [],
+    Done: [],
+  });
+
+  const fetchTasks = async () => {
+    if (!projectId) return;
+    try {
+      const response = await kabanApi.getTasksByProjectId(projectId);
+      console.log(response);
+
+      if (response.data.success) {
+        const tasks = response.data.data;
+
+        const grouped = {
+          Todo: [],
+          Doing: [],
+          Done: [],
+        };
+
+        tasks.forEach((task) => {
+          const status = task.status;
+          if (status === "to-do") grouped.Todo.push(task);
+          else if (status === "in-progress") grouped.Doing.push(task);
+          else if (status === "done") grouped.Done.push(task);
+        });
+
+        setKanbanData(grouped);
+      } else {
+        toast.error("Không thể lấy danh sách công việc");
+      }
+    } catch (error) {
+      toast.error("Lỗi server khi lấy tasks");
+    }
   };
+
+  useEffect(() => {
+    fetchTasks();
+  }, [projectId]);
+
   return (
     <div className="grid grid-cols-3 gap-4">
-      {Object.entries(boardData).map(([colTitle, tasks]) => (
+      {Object.entries(kanbanData).map(([colTitle, tasks]) => (
         <Column key={colTitle} title={colTitle} tasks={tasks} />
       ))}
     </div>
