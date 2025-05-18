@@ -2,6 +2,23 @@ const Task = require('../models/Task');
 const Module = require('../models/Module');
 const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 
+const getAllModulesByParent = async (parentId) => {
+    const result = [];
+    const queue = [parentId];
+
+    while (queue.length > 0) {
+        const current = queue.shift();
+        result.push(current);
+
+        const children = await Module.find({ parent: current }).select('_id');
+        for (const child of children) {
+            queue.push(child._id.toString());
+        }
+    }
+
+    return result;
+};
+
 const taskService = {
     createTask: async (moduleId, name, description, start_date, due_date) => {
         const module = await Module.findById(moduleId);
@@ -47,6 +64,14 @@ const taskService = {
 
     deleteTask: async (taskId) => {
         await Task.findByIdAndDelete(taskId);
+    },
+
+    getTasksByProjectId: async (projectId) => {
+        const moduleIds = await getAllModulesByParent(projectId);
+
+        const tasks = await Task.find({ module: { $in: moduleIds } });
+
+        return tasks;
     }
 };
 
