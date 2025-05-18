@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { AppContext } from "../../context/AppContext";
 import ProjectCard from "./ProjectCard";
 import projectApi from "../../api/projectApi";

@@ -8,6 +8,7 @@ import useUserStore from "../store/userStore";
 export const LoginPage = () => {
   const [form] = Form.useForm();
   const setUser = useUserStore((state) => state.setUser);
+  const setToken = useUserStore((state) => state.setToken);
   const navigate = useNavigate();
 
   const handleLogin = async (values) => {
@@ -15,7 +16,7 @@ export const LoginPage = () => {
       const response = await loginUser(values);
 
       setUser(response.data.user);
-
+      setToken(response.data.token);
       navigate("/");
     } catch (error) {
       const errorMsg =
