@@ -1,6 +1,7 @@
 const schedule = require('node-schedule')
 const Task = require('../models/Task')
-const notificationService = require('../services/notificationService')
+const notificationService = require('../services/notificationService');
+const taskService = require('./taskService');
 
 const startNotificationScheduler = () => {
     console.log('Starting notification scheduler....');
@@ -25,6 +26,14 @@ const checkUrgentTask = async() => {
         });
         console.log(`Found ${tasks.length} tasks due in the next 24 hours`);
         for (const task of tasks) {
+            receivers = await taskService.getTaskMembers(task._id);
+            for (const receiver of receivers) {
+                await notificationService.createNotification(
+                    receiver._id, 
+                    `Task "${task.title}" is due tomorrow on ${task.due_date.toDateString()}.`,
+                    'REMINDER', 
+                    `tasks/${task._id}`);
+            }
         }
     }
     catch(error) {
