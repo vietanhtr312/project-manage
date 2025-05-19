@@ -1,5 +1,5 @@
 const taskMemberService = require('../services/taskMemberService');
-
+const notificationService = require('../services/notificationService');
 exports.addTaskMember = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -16,9 +16,9 @@ exports.addTaskMember = async (req, res, next) => {
         
         if (userId) {
             const taskMember = await taskMemberService.addTaskMember(id, userId);
+            await notificationService.createNotification(userId, "You have been assigned a new task", "INFO", `tasks/${id}`)
             return res.status(201).json({ success: true, data: taskMember });
         }
-
         res.status(201).json({ success: true, message: "Member remove from task" });
     } catch (error) {
         next(error);
@@ -39,6 +39,7 @@ exports.removeTaskMember = async (req, res, next) => {
     try {
         const { id, userId } = req.params;
         await taskMemberService.removeTaskMember(id, userId);
+        await notificationService.createNotification(userId, "You have been removed from a task", "INFO", `tasks/${id}`)
         res.status(200).json({ success: true, message: "Member removed from task" });
     } catch (error) {
         next(error);
