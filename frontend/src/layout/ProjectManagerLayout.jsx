@@ -9,16 +9,16 @@ export const ProjectManagerLayout = () => {
 
   return (
     <div>
-      <div className="flex space-x-4 border-b p-2 bg-white m-3 rounded-xl">
+      <div className="flex space-x-4 p-2 bg-black/20 m-3 rounded-xl px-4">
         {tabs.map((tab) => (
           <NavLink
             key={tab.path}
             to={tab.path}
             className={({ isActive }) =>
-              `px-4 py-2 rounded-t ${
+              `px-4 py-2 rounded ${
                 isActive
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-white/20 text-white"
+                  : "bg-black/10 text-white/90 hover:bg-black/20 hover:text-white"
               }`
             }
           >

@@ -1,55 +1,85 @@
 const Task = require('../models/Task');
+const Module = require('../models/Module');
 const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
-const TaskMember = require('../models/TaskMember')
+const TaskMember = require('../models/TaskMember');
+
+const getAllModulesByParent = async (parentId) => {
+    const result = [];
+    const queue = [parentId];
+
+    while (queue.length > 0) {
+        const current = queue.shift();
+        result.push(current);
+
+        const children = await Module.find({ parent: current }).select('_id');
+        for (const child of children) {
+            queue.push(child._id.toString());
+        }
+    }
+
+    return result;
+};
+
 const taskService = {
-    createTask: async ({ name, description, user_id, start_date, due_date, priority }) => {
-        return await Task.create({ name, description, user_id, start_date, due_date, priority });
-    },
+    createTask: async (moduleId, name, description, start_date, due_date) => {
+        const module = await Module.findById(moduleId);
+        if (!module) {
+            throw new ResourceNotFoundError("Module not found");
+        }
 
-    getTasks: async (projectId, page, limit) => {
-        const skip = (page - 1) * limit;
-        return await Task.find({ project: projectId }).skip(skip).limit(limit);
-    },
-
-    getTaskById: async (id) => {
-        const task = await Task.findById(id);
-        if (!task) throw new ResourceNotFoundError("Task not found");
-        return task;
-    },
-
-    updateTask: async (id, updates) => {
-        const task = await Task.findByIdAndUpdate(id, updates, { new: true });
-        if (!task) throw new ResourceNotFoundError("Task not found");
-        return task;
-    },
-
-    deleteTask: async (id) => {
-        const task = await Task.findByIdAndDelete(id);
-        if (!task) throw new ResourceNotFoundError("Task not found");
-        return task;
-    },
-
-    updateTaskStatus: async (id, status) => {
-        const task = await Task.findByIdAndUpdate(id, { status }, { new: true });
-        if (!task) throw new ResourceNotFoundError("Task not found");
-        return task;
-    },
-
-    getTasksDueIn: async (days) => {
-        const now = new Date();
-        const due_date = new Date();
-        due_date.setDate(now.getDate() + days);
-        const tasks = await Task.find({
-            due_date : due_date,
-            status: {$ne: 'COMPLETED'}
+        return await Task.create({
+            module: moduleId,
+            name,
+            description,
+            start_date,
+            due_date,
+            status: 'to-do',
         });
-        if (!tasks) throw new ResourceNotFoundError("Task not found");
-        return tasks;
     },
 
-    getTaskMembers: async(taskId) => {
-        const taskMembers = await TaskMember.find({task: taskId}).populate('member');
-        return taskMembers;
+    getTasksByModule: async (moduleId) => {
+        return await Task.find({ module: moduleId });
+    },
+
+    getTaskById: async (taskId) => {
+        const task = await Task.findById(taskId).populate('module');
+        const taskmember = await TaskMember.findOne({task: taskId})
+
+        if (!task) {
+            throw new ResourceNotFoundError("Task not found");
+        }
+
+        if (taskmember) {
+            await taskmember.populate('member', 'name email');
+        }
+        
+        return { ...task.toObject(), member: taskmember ? taskmember.member : null };
+    },
+
+    updateTask: async (taskId, updateData) => {
+        const task = await Task.findByIdAndUpdate(
+            taskId,
+            updateData,
+            { new: true, runValidators: true }
+        );
+
+        if (!task) {
+            throw new ResourceNotFoundError("Task not found");
+        }
+
+        return task;
+    },
+
+    deleteTask: async (taskId) => {
+        await Task.findByIdAndDelete(taskId);
+    },
+
+    getTasksByProjectId: async (projectId) => {
+        const moduleIds = await getAllModulesByParent(projectId);
+
+        const tasks = await Task.find({ module: { $in: moduleIds } });
+
+        return tasks;
     }
 };
 

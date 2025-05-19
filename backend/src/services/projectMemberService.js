@@ -72,7 +72,7 @@ const projectMemberService = {
 
     getProjectMembers: async (projectId) => {
         try {
-            const projectMembers = await ProjectMember.find({ project: projectId })
+            const projectMembers = await ProjectMember.find({ project: projectId, role: { $ne: 'leader' } })
                 .populate("member", "name email")
                 .select('member role');
             if (!projectMembers) throw new ResourceNotFoundError("This project doesn't have members");
@@ -115,6 +115,18 @@ const projectMemberService = {
             return true;
         } catch (error) {
             throw new AppError("Failed to check if user is a member");
+        }
+    },
+
+    getAllProjects: async (userId) => {
+        try {
+            const projects = await ProjectMember.find({ member: userId})
+                .populate("project", "title")
+                .select('project');
+            if (!projects || projects.length === 0) throw new ResourceNotFoundError("Project not found");
+            return projects;
+        } catch (error) {
+            throw new AppError("Failed to fetch projects led by the user");
         }
     },
 

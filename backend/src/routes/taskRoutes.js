@@ -5,12 +5,16 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 router.use(authMiddleware);
 
-// Task Routes
-router.post('/tasks', taskController.createTask);
-router.get('/tasks', taskController.getTasks);
-router.get('/tasks/:id', taskController.getTaskById);
-router.put('/tasks/:id', taskController.updateTask);
-router.patch('/tasks/:id/status', taskController.updateTaskStatus);
-router.delete('/tasks/:id', taskController.deleteTask);
+router.get('/project/:projectId', taskController.getTasksByProjectId);
+
+router.get('/modules/:moduleId/tasks', taskController.getTasksByModule);
+router.post('/modules/:moduleId/tasks', taskController.createTask);
+
+router.get('/tasks/:id', taskController.getTaskDetails);
+
+router.get('/:id', taskController.getTaskById);
+router.post('/create/:moduleId', taskController.createTask);
+router.put('/:id', taskController.updateTask);
+router.delete('/:id', taskController.deleteTask);
 
 module.exports = router;

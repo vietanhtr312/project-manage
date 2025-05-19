@@ -3,6 +3,7 @@ const jwtUtils = require('../utils/jwtUtils')
 const passwordUtils = require('../utils/passwordUtils');
 const UserAlreadyExistsError = require('../errors/UserAlreadyExistsError');
 const InvalidCredentialsError = require('../errors/InvalidCredentialsError');
+const AppError = require('../errors/AppError');
 
 const authService = {
     /**
@@ -42,6 +43,8 @@ const authService = {
                 }
             }
         } catch (error) {
+            console.log(error);
+            
             throw new AppError("Failed to register");
         }
 
