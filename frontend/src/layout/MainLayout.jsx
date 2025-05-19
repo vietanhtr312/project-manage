@@ -14,7 +14,7 @@ const MainLayout = () => {
           displaySidebar ? "pl-[250px]" : "pl-0"
         }`}
       >
-        <Header display={displaySidebar} setDisplay={setDisplaySidebar} />
+        <Header display={displaySidebar} setDisplay={setDisplaySidebar}/>
         <div>
           <Outlet />
         </div>

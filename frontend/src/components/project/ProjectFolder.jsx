@@ -69,7 +69,7 @@ const ProjectFolder = ({ onAddNewClick, setProject, onUpdateClick }) => {
   };
 
   const AddNewProjectCard = () => (
-    <div className="relative flex flex-col justify-center items-center w-64 h-40 mb-16 bg-white rounded-2xl rounded-tl-none shadow-md">
+    <div className="relative z-10 flex flex-col justify-center items-center w-64 h-40 mb-16 bg-white rounded-2xl rounded-tl-none shadow-md">
       <div className="absolute left-0 top-[-40px] bg-white rounded-2xl rounded-b-none cursor-pointer group-hover:bg-gray-300 h-10 w-28"></div>
       <button
         className="text-black py-2 px-4 rounded-lg bg-blue-300 hover:bg-blue-500 hover:text-white"

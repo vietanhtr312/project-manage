@@ -4,16 +4,15 @@ exports.addTaskMember = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { userId } = req.body;
-        const memberId = await taskMemberService.getTaskMembers(id);
+        const oldMember = await taskMemberService.getTaskMembers(id);
 
-        if (userId === memberId) {
-            return res.status(400).json({ success: false, message: "User is already a member of this task" });
+        if (oldMember.length > 0) {
+            if (userId === oldMember[0].member._id) {
+                return res.status(400).json({ success: false, message: "User is already a member of this task" });
+            } else
+                await taskMemberService.removeTaskMember(id, oldMember[0].member._id);
         }
 
-        if (memberId) {
-            await taskMemberService.removeTaskMember(id, memberId);
-        } 
-        
         if (userId) {
             const taskMember = await taskMemberService.addTaskMember(id, userId);
             await notificationService.createNotification(userId, "You have been assigned a new task", "INFO", `tasks/${id}`)

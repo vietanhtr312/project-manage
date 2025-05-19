@@ -1,16 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Minus, User, UserRoundCheck, UserRoundSearch } from "lucide-react";
+import { Minus, UserRoundCheck, UserRoundSearch } from "lucide-react";
 import { ProjectContext } from "../../context/ProjectContext";
 
-export default function WBSBoard() {
+export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPopup, setShowAddMemberPopup, setTaskId }) {
   const { projectStructure } = useContext(ProjectContext);
   const [projectName, setProjectName] = useState(projectStructure?.title);
   const [modules, setModules] = useState(projectStructure?.modules || []);
   const [selectedItem, setSelectedItem] = useState(null);
   const [details, setDetails] = useState(null);
-  const { createModule, createTask, updateModule, deleteModule, updateTask, deleteTask, assignTask, getTaskById } = useContext(ProjectContext);
+  const { updateModule, deleteModule, updateTask, deleteTask, getTaskById, taskMember, setTaskMember } = useContext(ProjectContext);
   const [isUpdate, setIsUpdate] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (projectStructure) {
@@ -20,26 +19,21 @@ export default function WBSBoard() {
   }, [projectStructure]);
 
   const addModule = () => {
-    createModule(projectStructure._id, {
-      name: "test",
-      description: "test",
-    });
+    setModuleId(null);
+    setParentId(null);
+    setShowAddProjectPopup(true);
   };
 
   const addTask = (moduleId, parentId) => {
-    createTask(moduleId, {
-      name: "test",
-      description: "test",
-      start_date: "2023-10-01",
-      due_date: "2023-10-31",
-    }, parentId);
+    setModuleId(moduleId);
+    setParentId(parentId);
+    setShowAddProjectPopup(true);
   };
 
   const addSubModule = (moduleId) => {
-    createModule(moduleId, {
-      name: "test",
-      description: "test",
-    }, moduleId);
+    setModuleId(moduleId);
+    setParentId(null);
+    setShowAddProjectPopup(true);
   };
 
   const selectItem = async (item) => {
@@ -60,9 +54,7 @@ export default function WBSBoard() {
         description: submodule.description,
       });
     } else if (type === "task") {
-      setLoading(true);
       const task = await getTaskById(taskId);
-      setLoading(false);
 
       setDetails({
         name: task.name,
@@ -120,22 +112,33 @@ export default function WBSBoard() {
   };
 
   const assignMember = () => {
-    assignTask(selectedItem.taskId, "68274bf51fc67ad4397bcc51");
-    setDetails({ ...details, member: "vietanh" });
+    if (!selectedItem) return;
+    const { type, taskId } = selectedItem;
+    setTaskId(taskId);
+    setShowAddMemberPopup(true);
   }
+
+  useEffect(() => {
+    if (taskMember && selectedItem.type === 'task') {
+      setDetails({ ...details, member: taskMember.name });
+      setTaskMember(null);
+    }
+  }, [taskMember])
 
   return (
     <div className="flex flex-col h-full">
       <div className="bg-gray-100 p-4 border-b flex flex-col items-center ml-[380px] border-2 border-b-0 rounded-tl-lg rounded-tr-lg bg-yellow-50">
-        <div className="text-xl font-bold border bg-orange-200 p-2 rounded w-64 text-center flex gap-4 justify-center">
-          {projectName}
-          <button
-            className="bg-blue-500 text-white px-2 py-0 rounded shadow"
-            onClick={addModule}
-          >
-            +
-          </button>
-        </div>
+        {
+          projectName &&
+          <div className="text-xl font-bold border bg-orange-200 p-2 rounded w-64 text-center flex gap-4 justify-center">
+            {projectName}
+            <button
+              className="bg-blue-500 text-white px-2 py-0 rounded shadow pb-1"
+              onClick={addModule}
+            >
+              +
+            </button>
+          </div>}
       </div>
 
       <div className="flex flex-1 overflow-hidden">
@@ -169,7 +172,7 @@ export default function WBSBoard() {
                   </button>
                   <button
                     className="bg-green-500 text-white px-4 py-2 rounded ml-2"
-                    onClick={() => addTask(selectedItem.moduleId)}
+                    onClick={() => addTask(selectedItem.moduleId, selectedItem.moduleId)}
                   >
                     + Add Task
                   </button>
@@ -237,7 +240,7 @@ export default function WBSBoard() {
                     >
                       Update
                     </button>
-                    
+
                   </div>
                 ) : (
                   <div className="flex gap-10 pt-8">
@@ -318,7 +321,7 @@ export default function WBSBoard() {
                           >
                             <Minus color="rgb(96 165 250)" /> {sub.name}
                           </div>
-  
+
                           {sub.tasks && sub.tasks.length > 0 && (
                             <div className="mt-2 ml-4 space-y-1 border-l-2 border-gray-400">
                               {sub.tasks.map((task) => (

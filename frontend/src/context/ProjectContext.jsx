@@ -7,6 +7,7 @@ export const ProjectContext = createContext();
 
 export const ProjectContextProvider = (props) => {
   const [projectStructure, setProjectStructure] = useState(null);
+  const [taskMember, setTaskMember] = useState(null);
   const { projectId } = useContext(AppContext);
 
   const fetchProjectStructure = async () => {
@@ -381,6 +382,7 @@ export const ProjectContextProvider = (props) => {
       const response = await wbsApi.assignTask(taskId, userId);
       if (response.data.success) {
         toast.success("Task assigned successfully");
+        setTaskMember(response.data.data.member);
         setProjectStructure((prev) => {
           const updatedModules = prev.modules.map((item) => {
             const updatedSubmodules = (item.submodules || []).map((submodule) => {
@@ -444,6 +446,7 @@ export const ProjectContextProvider = (props) => {
     }
   }
 
+
   useEffect(() => {
     if (projectId) {
       fetchProjectStructure();
@@ -467,6 +470,8 @@ export const ProjectContextProvider = (props) => {
         assignTask,
         unassignTask,
         getProjectMembers,
+        taskMember,
+        setTaskMember
       }}
     >
       {props.children}

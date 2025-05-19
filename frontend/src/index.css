@@ -21,3 +21,9 @@ body::-webkit-scrollbar-thumb {
     border-radius: 10px;
     border: none;
 }
+
+.custom_select {
+  appearance: none;         
+  -webkit-appearance: none; 
+  -moz-appearance: none;    
+}

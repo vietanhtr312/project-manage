@@ -11,7 +11,7 @@ const taskMemberService = {
 
         return await TaskMember.create({
             task: taskId,
-            member: user._id
+            member: user
         });
     },
 

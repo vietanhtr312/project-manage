@@ -70,6 +70,26 @@ const projectMemberService = {
         }
     },
 
+    getAllProjectMembers: async (projectId) => {
+        try {
+            const projectMembers = await ProjectMember.find({ project: projectId })
+                .populate("member", "name email")
+                .select('member role');
+            if (!projectMembers) throw new ResourceNotFoundError("This project doesn't have members");
+            const members = projectMembers.map((pm, index) => ({
+                index: index + 1,
+                ...pm.member.toObject(),
+                role: pm.role
+            }));
+            return {
+                count: members.length,
+                members: members
+            };
+        } catch (error) {
+            throw new AppError("Failed to fetch project members");
+        }
+    },
+
     getProjectMembers: async (projectId) => {
         try {
             const projectMembers = await ProjectMember.find({ project: projectId, role: { $ne: 'leader' } })
