@@ -1,6 +1,7 @@
 const Task = require('../models/Task');
 const User = require('../models/User');
 const AppError = require('../errors/AppError');
+const taskService = require('../services/taskService');
 
 exports.createTask = async (req, res, next) => {
     try {
@@ -13,45 +14,60 @@ exports.createTask = async (req, res, next) => {
             return next(new AppError("Deadline phải sau ngày bắt đầu", 400));
         }
 
-        const userExists = await User.findById(user_id);
-        if (!userExists) {
-            return next(new AppError("User ID không tồn tại", 404));
-        }
-
-        const task = await Task.create({ 
-            name, 
-            description, 
-            start_date, 
-            due_date, 
-            priority: priority || false 
-        });
-
+        const task = await taskService.createTask({ name, description, user_id, start_date, due_date, priority });
         res.status(201).json({ message: "OK", task_id: task._id });
     } catch (error) {
         next(error);
     }
 };
 
-exports.assignTask = async (req, res, next) => {
+exports.getTasks = async (req, res, next) => {
     try {
-        const { task_id, user_id, start_date, end_date, priority_toggle } = req.body;
+        const { projectId, page = 1, limit = 10 } = req.query;
+        const tasks = await taskService.getTasks(projectId, page, limit);
+        res.status(200).json({ message: "OK", data: tasks });
+    } catch (error) {
+        next(error);
+    }
+};
 
-        const task = await Task.findById(task_id);
-        const user = await User.findById(user_id);
-        if (!task || !user) {
-            return next(new AppError("Task ID hoặc User ID không tồn tại", 404));
-        }
-        if (new Date(end_date) <= new Date(start_date)) {
-            return next(new AppError("Ngày kết thúc phải lớn hơn ngày bắt đầu", 400));
-        }
+exports.getTaskById = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const task = await taskService.getTaskById(id);
+        res.status(200).json({ message: "OK", data: task });
+    } catch (error) {
+        next(error);
+    }
+};
 
-        task.assigned_to = user_id;
-        task.start_date = start_date;
-        task.end_date = end_date;
-        task.priority = priority_toggle === "on";
-        await task.save();
+exports.updateTask = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const updates = req.body;
+        const task = await taskService.updateTask(id, updates);
+        res.status(200).json({ message: "Updated", data: task });
+    } catch (error) {
+        next(error);
+    }
+};
 
-        res.status(200).json({ message: "OK" });
+exports.deleteTask = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        await taskService.deleteTask(id);
+        res.status(200).json({ message: "Deleted" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.updateTaskStatus = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const task = await taskService.updateTaskStatus(id, status);
+        res.status(200).json({ message: "Status updated", data: task });
     } catch (error) {
         next(error);
     }
