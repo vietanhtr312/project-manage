@@ -80,6 +80,20 @@ const taskService = {
         const tasks = await Task.find({ module: { $in: moduleIds } });
 
         return tasks;
+    },
+    getTasksDueIn: async(days) => {
+        const now = new Date();
+        const due_date = new Date(now);
+        due_date.setDate(now.getDate() + days);
+        const tasks = await Task.find({
+            due_date: {
+                $get: now,
+                $let: due_date
+            }, 
+            status:{$ne: 'done'}
+        })
+        if (!tasks || tasks.length == 0) throw new ResourceNotFoundError("You dont have a tasks");
+        return tasks;
     }
 };
 
