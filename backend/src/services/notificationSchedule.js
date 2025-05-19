@@ -40,3 +40,5 @@ const checkUrgentTask = async() => {
         console.log(error.message);
     }
 } 
+
+module.exports = startNotificationScheduler;

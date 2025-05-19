@@ -7,7 +7,8 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const taskRoutes = require('./routes/taskRoutes');
-const notificationRoutes = require('./routes/notificationRoutes')
+const notificationRoutes = require('./routes/notificationRoutes');
+const startNotificationScheduler = require('./services/notifcationSchedule');
 const errorHandler = require("./middlewares/errorHandler");
 const app = express();
 
@@ -37,6 +38,7 @@ app.use(errorHandler)
 const start = async () => {
     try {
         await connectDB(process.env.MONGO_URI);
+        startNotificationScheduler();
         const port = process.env.PORT;
         app.listen(port, ()=>{
             console.log(`Server is running on port ${port}`);
