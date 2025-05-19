@@ -3,9 +3,23 @@ const taskMemberService = require('../services/taskMemberService');
 exports.addTaskMember = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { email } = req.body;
-        const taskMember = await taskMemberService.addTaskMember(id, email);
-        res.status(201).json({ success: true, data: taskMember });
+        const { userId } = req.body;
+        const memberId = await taskMemberService.getTaskMembers(id);
+
+        if (userId === memberId) {
+            return res.status(400).json({ success: false, message: "User is already a member of this task" });
+        }
+
+        if (memberId) {
+            await taskMemberService.removeTaskMember(id, memberId);
+        } 
+        
+        if (userId) {
+            const taskMember = await taskMemberService.addTaskMember(id, userId);
+            return res.status(201).json({ success: true, data: taskMember });
+        }
+
+        res.status(201).json({ success: true, message: "Member remove from task" });
     } catch (error) {
         next(error);
     }

@@ -81,9 +81,8 @@ const ProjectFolder = ({ onAddNewClick, setProject, onUpdateClick }) => {
   );
 
   return (
-    <div className="h-full w-full bg-white/10 py-20 pl-10 pr-0 flex">
-
-      <div className="w-3/4 flex flex-row flex-wrap items-center mb-4 gap-8">
+    <div className="min-h-[calc(100vh-4rem)] w-full bg-white/10 pt-20 pl-10 pr-0 flex">
+      <div className="w-3/4 flex flex-row flex-wrap mb-4 gap-8">
         {projects &&
           projects.length > 0 &&
           projects.map((project, index) => (

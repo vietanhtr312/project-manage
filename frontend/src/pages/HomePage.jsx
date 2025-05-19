@@ -101,7 +101,7 @@ function HomePage() {
 
   return (
     <>
-      <div className=''>
+      <div className='min-h-[calc(100vh-4rem)] '>
         <ProjectFolder onAddNewClick={() => setShowModal(true)} setProject={setProject} onUpdateClick={() => {setShowModal(true); setIsUpdate(true)}}/>
       </div>
 

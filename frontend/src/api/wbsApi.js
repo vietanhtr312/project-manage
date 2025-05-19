@@ -2,6 +2,7 @@ import axiosClient from "./axiosClient";
 
 const wbsApi = {
     getProjectStructure: (projectId) => axiosClient.get(`/projects/${projectId}/structure`),
+    getProjectMembers: (projectId) => axiosClient.get(`/projects/${projectId}/members`),
 
     createModule: (parentId, module) => axiosClient.post(`/modules/projects/${parentId}/modules`, module),
     updateModule: (moduleId, module) => axiosClient.put(`/modules/${moduleId}`, module),
@@ -14,7 +15,7 @@ const wbsApi = {
     getTaskById: (taskId) => axiosClient.get(`/tasks/${taskId}`),
 
     getTaskMembers: (taskId) => axiosClient.get(`/taskmembers/tasks/${taskId}/members`),
-    assignTask: (taskId, userEmail) => axiosClient.post(`/taskmembers/tasks/${taskId}/members`, { userEmail }),
+    assignTask: (taskId, userId) => axiosClient.post(`/taskmembers/tasks/${taskId}/members`, { userId }),
     unassignTask: (taskId, userId) => axiosClient.post(`/taskmembers/tasks/${taskId}/members/${userId}`),
 }
 

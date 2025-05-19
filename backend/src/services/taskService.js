@@ -1,6 +1,7 @@
 const Task = require('../models/Task');
 const Module = require('../models/Module');
 const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
+const TaskMember = require('../models/TaskMember');
 
 const getAllModulesByParent = async (parentId) => {
     const result = [];
@@ -42,10 +43,17 @@ const taskService = {
 
     getTaskById: async (taskId) => {
         const task = await Task.findById(taskId).populate('module');
+        const taskmember = await TaskMember.findOne({task: taskId})
+
         if (!task) {
             throw new ResourceNotFoundError("Task not found");
         }
-        return task;
+
+        if (taskmember) {
+            await taskmember.populate('member', 'name email');
+        }
+        
+        return { ...task.toObject(), member: taskmember ? taskmember.member : null };
     },
 
     updateTask: async (taskId, updateData) => {

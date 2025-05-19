@@ -3,8 +3,8 @@ const User = require('../models/User');
 const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 
 const taskMemberService = {
-    addTaskMember: async (taskId, email) => {
-        const user = await User.findOne({ email });
+    addTaskMember: async (taskId, userId) => {
+        const user = await User.findById(userId);
         if (!user) {
             throw new ResourceNotFoundError("User not found");
         }

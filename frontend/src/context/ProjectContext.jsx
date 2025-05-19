@@ -376,11 +376,40 @@ export const ProjectContextProvider = (props) => {
     }
   };
 
-  const assignTask = async (taskId, userEmail) => {
+  const assignTask = async (taskId, userId) => {
     try {
-      const response = await wbsApi.assignTask(taskId, userEmail);
+      const response = await wbsApi.assignTask(taskId, userId);
       if (response.data.success) {
         toast.success("Task assigned successfully");
+        setProjectStructure((prev) => {
+          const updatedModules = prev.modules.map((item) => {
+            const updatedSubmodules = (item.submodules || []).map((submodule) => {
+              const updatedTasks = (submodule.tasks || []).map((task) => {
+                if (task._id === taskId) {
+                  return {
+                    ...task,
+                    members: response.data.data.member,
+                  };
+                }
+                return task;
+              });
+              return {
+                ...submodule,
+                tasks: updatedTasks,
+              };
+            });
+            return {
+              ...item,
+              submodules: updatedSubmodules,
+            };
+          });
+
+          return {
+            ...prev,
+            modules: updatedModules,
+          };
+        });
+          
       } else {
         console.error("Error assigning task:", response.statusText);
       }
@@ -401,6 +430,19 @@ export const ProjectContextProvider = (props) => {
       console.error("Error unassigning task:", error);
     }
   };
+
+  const getProjectMembers = async () => {
+    try {
+      const response = await wbsApi.getProjectMembers(projectId);
+      if (response.data.success) {
+        return response.data.data;
+      } else {
+        console.error("Error fetching project members:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching project members:", error);
+    }
+  }
 
   useEffect(() => {
     if (projectId) {
@@ -424,6 +466,7 @@ export const ProjectContextProvider = (props) => {
         getTaskMembers,
         assignTask,
         unassignTask,
+        getProjectMembers,
       }}
     >
       {props.children}
