@@ -4,7 +4,7 @@ import kabanApi from "../../api/kabanApi";
 import { AppContext } from "../../context/AppContext";
 import { toast } from "react-toastify";
 
-export const Board = () => {
+export const Board = ({ viewMode = "all", userId }) => {
   const { projectId } = useContext(AppContext);
 
   const [kanbanData, setKanbanData] = useState({
@@ -16,7 +16,12 @@ export const Board = () => {
   const fetchTasks = async () => {
     if (!projectId) return;
     try {
-      const response = await kabanApi.getTasksByProjectId(projectId);
+      let response;
+      if (viewMode === "me") {
+        response = await kabanApi.getTasksByUserAndProject(userId, projectId);
+      } else {
+        response = await kabanApi.getTasksByProjectId(projectId);
+      }
 
       if (response.data.success) {
         const tasks = response.data.data;
@@ -46,7 +51,7 @@ export const Board = () => {
 
   useEffect(() => {
     fetchTasks();
-  }, [projectId]);
+  }, [projectId, viewMode]);
 
   return (
     <div className="flex gap-4 items-start">

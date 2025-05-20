@@ -3,21 +3,21 @@ import { useContext } from "react";
 import { ProjectContext } from "../../context/ProjectContext";
 
 const AddMemberPopup = ({ onClose, onAdd, taskId }) => {
-  const { getProjectMembers } = useContext(ProjectContext);
+  const { getProjectMembers, getTaskMembers } = useContext(ProjectContext);
   const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
 
   useEffect(() => {
     const fetchTaskMembers = async () => {
       try {
-        const taskMember = await taskId;
-        setSelectedMember(taskMember[0].member._id);
+        const taskMember = await getTaskMembers(taskId);
+        setSelectedMember(taskMember[0].member._id)
       } catch (error) {
         console.error("Error fetching task members:", error);
       }
     };
     fetchTaskMembers();
-  }, [, taskId]);
+  }, [taskId]);
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -87,11 +87,10 @@ const AddMemberPopup = ({ onClose, onAdd, taskId }) => {
         <button
           onClick={handleAddMember}
           disabled={!selectedMember}
-          className={`w-full py-2 rounded-lg font-semibold transition duration-200 shadow-md ${
-            selectedMember
+          className={`w-full py-2 rounded-lg font-semibold transition duration-200 shadow-md ${selectedMember
               ? "bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800"
               : "bg-blue-200 text-blue-400 cursor-not-allowed"
-          }`}
+            }`}
         >
           Add Member
         </button>

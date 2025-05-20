@@ -6,7 +6,7 @@ import ProjectCard from "./ProjectCard";
 import projectApi from "../../api/projectApi";
 import useUserStore from "../../store/userStore";
 
-const ProjectFolder = ({ onAddNewClick, setProject, onUpdateClick }) => { 
+const ProjectFolder = ({ onAddNewClick, setProject, onUpdateClick }) => {
   const { projectId, setProjectId, projects, setProjects, onRefresh, setOnRefresh } = useContext(AppContext);
   const [projectDetails, setProjectDetails] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
@@ -31,9 +31,9 @@ const ProjectFolder = ({ onAddNewClick, setProject, onUpdateClick }) => {
   };
 
   useEffect(() => {
-      handlefetchProjects();
-      setOnRefresh(false);
-  }, [onRefresh]); 
+    handlefetchProjects();
+    setOnRefresh(false);
+  }, [onRefresh]);
 
   const fetchProjectDetails = async (projectId) => {
     try {
@@ -98,17 +98,6 @@ const ProjectFolder = ({ onAddNewClick, setProject, onUpdateClick }) => {
       <div className="mr-8 w-80 z-1 bg-white rounded-2xl max-h-[500px]">
         <div className="flex justify-between items-center px-8 mt-10 mb-3">
           <h2 className="text-left text-2xl font-bold">Details</h2>
-          {showDetails && (
-            <button
-              onClick={handleManageClick}
-              className="h-10 text-black py-2 pl-4 pr-2 rounded-lg bg-green-100 hover:bg-green-500 hover:text-white flex items-center"
-            >
-              <span className="mb-1" onClick={() => { }}>
-                Manage
-              </span>
-              <ChevronRight />
-            </button>
-          )}
         </div>
         {!showDetails ? (
           <div className="text-left my-2 text-gray-500 ml-8">
@@ -156,8 +145,14 @@ const ProjectFolder = ({ onAddNewClick, setProject, onUpdateClick }) => {
                 <button className="text-black py-2 px-4 rounded-lg bg-yellow-100 hover:bg-yellow-500 hover:text-white" onClick={handleUpdateProject}>
                   Update
                 </button>
-                <button className="text-black py-2 px-4 rounded-lg bg-red-100 hover:bg-red-500 hover:text-white">
-                  Delete
+                <button
+                  onClick={handleManageClick}
+                  className="h-10 text-black py-2 pl-4 pr-2 rounded-lg bg-green-100 hover:bg-green-500 hover:text-white flex items-center"
+                >
+                  <span className="mb-1" onClick={() => { }}>
+                    Manage
+                  </span>
+                  <ChevronRight />
                 </button>
               </div>
             </div>

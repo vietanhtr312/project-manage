@@ -17,9 +17,6 @@ const getAllModuleIdsFromParent = async (parentId) => {
             queue.push(child._id.toString());
         }
     }
-    console.log(allIds);
-
-
     return allIds;
 };
 
@@ -75,10 +72,10 @@ const taskService = {
 
     deleteTask: async (taskId) => {
         await Task.findByIdAndDelete(taskId);
+        await TaskMember.findOneAndDelete({ task: taskId });
     },
 
     getTasksByProjectId: async (projectId) => {
-        // Tìm các module gốc của project
         const rootModules = await Module.find({ parent: projectId }).select('_id');
         if (!rootModules.length) return [];
 
@@ -88,7 +85,6 @@ const taskService = {
             allModuleIds = allModuleIds.concat(ids);
         }
 
-        // Truy vấn tất cả task theo moduleIds
         const tasks = await Task.find({ module: { $in: allModuleIds } });
 
         return tasks;
@@ -108,16 +104,34 @@ const taskService = {
         return tasks;
     },
 
-    getTasksByUserId: async (userId) => {
+    getTasksByUserAndProject: async (userId, projectId) => {
+        const rootModules = await Module.find({ parent: projectId }).select('_id');
+        if (!rootModules.length) return [];
+
+        let allModuleIds = [];
+        for (const mod of rootModules) {
+            const ids = await getAllModuleIdsFromParent(mod._id.toString());
+            allModuleIds = allModuleIds.concat(ids);
+        }
         const taskMembers = await TaskMember.find({ member: userId })
-            .populate('task');
+            .populate({
+                path: 'task',
+                populate: {
+                    path: 'module',
+                    select: '_id parent',
+                },
+            });
 
         const tasks = taskMembers
             .map((tm) => tm.task)
-            .filter((task) => task !== null); // Lọc các task bị null (do task bị xóa nhưng taskMember vẫn tồn tại)
+            .filter((task) =>
+                task &&
+                task.module &&
+                allModuleIds.includes(String(task.module._id))
+            );
 
         return tasks;
-    }
+    },
 
 };
 

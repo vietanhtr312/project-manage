@@ -137,10 +137,10 @@ const taskController = {
         }
     },
 
-    getTasksByUserId: async (req, res, next) => {
+    getTasksByUserAndProject: async (req, res, next) => {
         try {
-            const { userId } = req.params;
-            const tasks = await taskService.getTasksByUserId(userId);
+            const { userId, projectId } = req.params;
+            const tasks = await taskService.getTasksByUserAndProject(userId, projectId);
             res.status(200).json({ success: true, data: tasks });
         } catch (error) {
             next(error);
