@@ -17,9 +17,6 @@ const getAllModuleIdsFromParent = async (parentId) => {
             queue.push(child._id.toString());
         }
     }
-    console.log(allIds);
-
-
     return allIds;
 };
 
@@ -75,6 +72,7 @@ const taskService = {
 
     deleteTask: async (taskId) => {
         await Task.findByIdAndDelete(taskId);
+        await TaskMember.findOneAndDelete({ task: taskId });
     },
 
     getTasksByProjectId: async (projectId) => {

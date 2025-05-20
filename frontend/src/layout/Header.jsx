@@ -65,6 +65,7 @@ const Header = ({ display, setDisplay }) => {
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
     }
+    setNewNotificationCount(0);
   }
 
   const handleClickNotification = async (notification) => {
@@ -81,7 +82,9 @@ const Header = ({ display, setDisplay }) => {
         console.error("Error marking notification as read:", error);
       }
     }
-    navigate('/');
+    setShowNotifications(false);
+    setNewNotificationCount((prev) => prev - 1);
+    navigate('/kaban');
   }
 
   return (

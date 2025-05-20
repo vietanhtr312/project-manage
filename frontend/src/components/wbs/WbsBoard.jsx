@@ -1,18 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Minus, UserRoundCheck, UserRoundSearch } from "lucide-react";
 import { ProjectContext } from "../../context/ProjectContext";
+import useUserStore from "../../store/userStore";
 
 export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPopup, setShowAddMemberPopup, setTaskId }) {
-  const { projectStructure } = useContext(ProjectContext);
+  const { projectStructure, updateModule, deleteModule, updateTask, deleteTask, getTaskById, taskMember, setTaskMember } = useContext(ProjectContext);
+  const user = useUserStore((state) => state.user);
   const [projectName, setProjectName] = useState(projectStructure?.title);
   const [modules, setModules] = useState(projectStructure?.modules || []);
   const [selectedItem, setSelectedItem] = useState(null);
   const [details, setDetails] = useState(null);
-  const { updateModule, deleteModule, updateTask, deleteTask, getTaskById, taskMember, setTaskMember } = useContext(ProjectContext);
   const [isUpdate, setIsUpdate] = useState(false);
+  const [isLeader, setIsLeader] = useState(false);
 
   useEffect(() => {
     if (projectStructure) {
+      setIsLeader(projectStructure.leader === user.id);
       setProjectName(projectStructure.title);
       setModules(projectStructure.modules || []);
     }
@@ -132,12 +135,12 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
           projectName &&
           <div className="text-xl font-bold border bg-orange-200 p-2 rounded w-64 text-center flex gap-4 justify-center">
             {projectName}
-            <button
+            {isLeader && <button
               className="bg-blue-500 text-white px-2 py-0 rounded shadow pb-1"
               onClick={addModule}
             >
               +
-            </button>
+            </button>}
           </div>}
       </div>
 
@@ -148,12 +151,12 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
             {selectedItem && selectedItem.type === 'task' && (
               <>
                 {details?.member ? (
-                  <div className="flex items-center gap-2 text-white cursor-pointer" onClick={assignMember}>
+                  <div className={`flex items-center gap-2 text-white ${isLeader ? "cursor-pointer" : ""}`} onClick={() => { if (isLeader) assignMember() }}>
                     {details?.member}
-                    <UserRoundCheck className="text-white" />
+                    {isLeader && <UserRoundCheck className="text-white" />}
                   </div>
                 ) : (
-                  <button onClick={assignMember}>
+                  isLeader && <button onClick={assignMember}>
                     <UserRoundSearch className="text-white" />
                   </button>)}
               </>
@@ -162,33 +165,37 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
 
           {selectedItem ? (
             <div className="text-white mb-4">
-              {selectedItem.type === "module" ? (
-                <div className="mt-4">
-                  <button
-                    className="bg-purple-500 text-white px-4 py-2 rounded"
-                    onClick={() => addSubModule(selectedItem.moduleId)}
-                  >
-                    + Add Submodule
-                  </button>
-                  <button
-                    className="bg-green-500 text-white px-4 py-2 rounded ml-2"
-                    onClick={() => addTask(selectedItem.moduleId, selectedItem.moduleId)}
-                  >
-                    + Add Task
-                  </button>
-                </div>
-              ) : selectedItem.type === "submodule" ? (
-                <div className="mt-4">
-                  <button
-                    className="bg-green-500 text-white px-4 py-2 rounded mr-2"
-                    onClick={() =>
-                      addTask(selectedItem.submoduleId, selectedItem.moduleId)
-                    }
-                  >
-                    + Add Task
-                  </button>
-                </div>
-              ) : null}
+              {isLeader &&
+                <>
+                  ({selectedItem.type === "module" ? (
+                    <div className="mt-4">
+                      <button
+                        className="bg-purple-500 text-white px-4 py-2 rounded"
+                        onClick={() => addSubModule(selectedItem.moduleId)}
+                      >
+                        + Add Submodule
+                      </button>
+                      <button
+                        className="bg-green-500 text-white px-4 py-2 rounded ml-2"
+                        onClick={() => addTask(selectedItem.moduleId, selectedItem.moduleId)}
+                      >
+                        + Add Task
+                      </button>
+                    </div>
+                  ) : selectedItem.type === "submodule" ? (
+                    <div className="mt-4">
+                      <button
+                        className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                        onClick={() =>
+                          addTask(selectedItem.submoduleId, selectedItem.moduleId)
+                        }
+                      >
+                        + Add Task
+                      </button>
+                    </div>
+                  ) : null})
+                </>
+              }
               <input
                 className="mt-4 w-full p-2 border rounded text-black"
                 value={details?.name}
@@ -225,39 +232,43 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
                   </>
                 )}
               </div>
-              {
-                isUpdate ? (
-                  <div className="flex justify-between pt-8">
-                    <button
-                      className="border border-gray-300 rounded-md bg-white text-red-500 hover:bg-gray-50 px-4 py-2 rounded"
-                      onClick={() => setIsUpdate(false)}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      className="bg-green-500 text-white px-4 py-2 rounded"
-                      onClick={updateItem}
-                    >
-                      Update
-                    </button>
+              {isLeader &&
+                <>
+                  ({
+                    isUpdate ? (
+                      <div className="flex justify-between pt-8">
+                        <button
+                          className="border border-gray-300 rounded-md bg-white text-red-500 hover:bg-gray-50 px-4 py-2 rounded"
+                          onClick={() => setIsUpdate(false)}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          className="bg-green-500 text-white px-4 py-2 rounded"
+                          onClick={updateItem}
+                        >
+                          Update
+                        </button>
 
-                  </div>
-                ) : (
-                  <div className="flex gap-10 pt-8">
-                    <button
-                      onClick={onUpdate}
-                      className="bg-yellow-500 text-white px-4 py-2 rounded"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={deleteItem}
-                      className="bg-red-500 text-white px-4 py-2 rounded"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )
+                      </div>
+                    ) : (
+                      <div className="flex gap-10 pt-8">
+                        <button
+                          onClick={onUpdate}
+                          className="bg-yellow-500 text-white px-4 py-2 rounded"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={deleteItem}
+                          className="bg-red-500 text-white px-4 py-2 rounded"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )
+                  })
+                </>
               }
 
             </div>
