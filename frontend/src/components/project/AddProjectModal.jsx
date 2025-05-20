@@ -15,14 +15,14 @@ function AddProjectModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-md rounded-md shadow-lg">
+      <div className="bg-white w-full max-w-md rounded-md shadow-lg px-2">
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-xl font-semibold text-blue-900">Add New Project</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 text-3xl font-bold transition-colors duration-150"
           >
-            ×
+            &times;
           </button>
         </div>
 

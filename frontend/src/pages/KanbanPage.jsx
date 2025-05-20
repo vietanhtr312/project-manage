@@ -9,7 +9,7 @@ export const KanbanPage = () => {
   return (
     <div className="px-36">
       <h2 className="text-2xl font-bold py-5 text-white">
-        Manage Project {projectStructure.title}
+        Manage Project {projectStructure?.title}
       </h2>
       <div className=" bg-white/10 rounded-xl p-3">
         <Board />

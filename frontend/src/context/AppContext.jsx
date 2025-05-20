@@ -12,6 +12,8 @@ export const AppContextProvider = (props) => {
   console.log(userData);
 
   const [projectId, setProjectId] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [onRefresh, setOnRefresh] = useState(false);
 
   const fetchUserData = async () => {
     try {
@@ -48,6 +50,10 @@ export const AppContextProvider = (props) => {
         backendUrl,
         projectId,
         setProjectId,
+        projects,
+        setProjects,
+        onRefresh,
+        setOnRefresh,
       }}
     >
       {props.children}

@@ -1,6 +1,18 @@
 const taskService = require('../services/taskService');
 const taskMemberService = require('../services/taskMemberService');
 const Task = require('../models/Task');
+const ProjectMember = require('../models/ProjectMember');
+const Module = require('../models/Module')
+const TaskMember = require('../models/TaskMember')
+const getRootProjectId = async (moduleId) => {
+    let current = await Module.findById(moduleId);
+    while (current && current.parent) {
+        const parentModule = await Module.findById(current.parent);
+        if (!parentModule) break;
+        current = parentModule;
+    }
+    return current.parent;
+};
 
 const taskController = {
 
@@ -42,25 +54,32 @@ const taskController = {
             const userId = req.user.id;
 
             const task = await taskService.getTaskById(id);
-            if (!task) throw new Error('Task not found');
+            if (!task) throw new Error("Task not found");
 
-            const module = task.module;
+            const moduleId = typeof task.module === "object" ? task.module._id : task.module;
+            const projectId = await getRootProjectId(moduleId);
+
             const projectMember = await ProjectMember.findOne({
-                project: module.parent,
+                project: projectId,
                 member: userId,
             });
 
             if (!projectMember) {
-                return res.status(403).json({ success: false, message: 'You are not part of this project.' });
+                return res.status(403).json({
+                    success: false,
+                    message: "You are not part of this project.",
+                });
             }
 
-            const isLeader = projectMember.role === 'leader';
-            const isMember = projectMember.role === 'member';
+            const isMember = projectMember.role === "member";
 
             if (isMember) {
-                const nonAllowedKeys = Object.keys(updateData).filter(k => k !== 'progress');
+                const nonAllowedKeys = Object.keys(updateData).filter((k) => k !== "progress");
                 if (nonAllowedKeys.length > 0) {
-                    return res.status(403).json({ success: false, message: 'Member chỉ được cập nhật progress.' });
+                    return res.status(403).json({
+                        success: false,
+                        message: "Member chỉ được cập nhật progress.",
+                    });
                 }
             }
 
@@ -70,6 +89,7 @@ const taskController = {
             next(error);
         }
     },
+
 
 
     deleteTask: async (req, res, next) => {
@@ -116,6 +136,19 @@ const taskController = {
             res.status(500).json({ error: 'Lỗi server' });
         }
     },
+
+    getTasksByUserId: async (req, res, next) => {
+        try {
+            const { userId } = req.params;
+            const tasks = await TaskMember.find({ member: userId })
+                .populate('task')
+                .then((results) => results.map((tm) => tm.task));
+
+            res.status(200).json({ success: true, data: tasks });
+        } catch (error) {
+            next(error);
+        }
+    }
 
 }
 
