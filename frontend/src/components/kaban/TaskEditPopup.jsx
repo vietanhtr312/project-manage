@@ -6,19 +6,17 @@ import useUserStore from "../../store/userStore";
 const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
   const user = useUserStore((state) => state.user);
   const { projectStructure, getTaskById } = useContext(ProjectContext);
-  const [errorMsg, setErrorMsg] = useState("");
   const isLeader = projectStructure.leader === user.id;
   const [member, setMember] = useState(null);
 
   const fetchTaskDetails = async () => {
     try {
       const res = await getTaskById(task._id);
-      setMember(res.member)
+      setMember(res.member);
     } catch (err) {
       console.log(err);
     }
-  }
-
+  };
   useEffect(() => {
     fetchTaskDetails();
   }, [task._id]);
@@ -41,11 +39,6 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (!isLeader && name !== "progress") {
-      setErrorMsg("Chỉ Leader mới được chỉnh sửa thông tin này");
-      return;
-    }
     if (name === "status" && value === "done") {
       setFormData((prev) => ({
         ...prev,
@@ -55,8 +48,6 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
-
-    setErrorMsg("");
   };
 
   const handleSubmit = (e) => {
@@ -75,8 +66,6 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
           {member && member.name}
         </div>
 
-        {errorMsg && <p className="text-red-600 mb-2">{errorMsg}</p>}
-
         <div className="text-blue-800 font-medium flex items-center">
           <span className="text-black mr-2">From: </span>
           {formData.start_date}
@@ -88,6 +77,7 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
             <label className="block mb-1 font-medium">Details:</label>
             <textarea
               name="description"
+              disabled={member?._id !== user.id}
               value={formData.description}
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
@@ -112,16 +102,13 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block font-medium mb-1">
-              Status
-            </label>
+            <label className="block font-medium mb-1">Status</label>
             <select
               name="status"
               value={formData.status}
               onChange={handleChange}
-              disabled={!isLeader || isSeeDetail}
-              className={`w-full border px-3 py-2 rounded ${!isLeader ? "bg-gray-100 text-gray-500" : ""
-                }`}
+              disabled={isSeeDetail}
+              className={"w-full border px-3 py-2 rounded"}
             >
               <option value="to-do">To Do</option>
               <option value="in-progress">In Progress</option>
@@ -137,12 +124,14 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
             >
               {isSeeDetail ? "Close" : "Cancel"}
             </button>
-            { !isSeeDetail && <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Save
-            </button>}
+            {!isSeeDetail && (
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Save
+              </button>
+            )}
           </div>
         </form>
       </div>
