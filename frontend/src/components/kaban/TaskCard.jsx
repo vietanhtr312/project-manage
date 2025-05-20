@@ -22,7 +22,6 @@ export const TaskCard = ({ task, fetchTasks }) => {
   const handleUpdateTask = async (updatedTask) => {
     try {
       const res = await kabanApi.updateTask(currentTask._id, updatedTask);
-      console.log(res);
 
       if (res.data.success) {
         setCurrentTask(res.data.data);

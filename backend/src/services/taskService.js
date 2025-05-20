@@ -76,7 +76,6 @@ const taskService = {
     },
 
     getTasksByProjectId: async (projectId) => {
-        // Tìm các module gốc của project
         const rootModules = await Module.find({ parent: projectId }).select('_id');
         if (!rootModules.length) return [];
 
@@ -86,7 +85,6 @@ const taskService = {
             allModuleIds = allModuleIds.concat(ids);
         }
 
-        // Truy vấn tất cả task theo moduleIds
         const tasks = await Task.find({ module: { $in: allModuleIds } });
 
         return tasks;
@@ -104,7 +102,37 @@ const taskService = {
         })
         if (!tasks || tasks.length == 0) throw new ResourceNotFoundError("You dont have a tasks");
         return tasks;
-    }
+    },
+
+    getTasksByUserAndProject: async (userId, projectId) => {
+        const rootModules = await Module.find({ parent: projectId }).select('_id');
+        if (!rootModules.length) return [];
+
+        let allModuleIds = [];
+        for (const mod of rootModules) {
+            const ids = await getAllModuleIdsFromParent(mod._id.toString());
+            allModuleIds = allModuleIds.concat(ids);
+        }
+        const taskMembers = await TaskMember.find({ member: userId })
+            .populate({
+                path: 'task',
+                populate: {
+                    path: 'module',
+                    select: '_id parent',
+                },
+            });
+
+        const tasks = taskMembers
+            .map((tm) => tm.task)
+            .filter((task) =>
+                task &&
+                task.module &&
+                allModuleIds.includes(String(task.module._id))
+            );
+
+        return tasks;
+    },
+
 };
 
 module.exports = taskService;

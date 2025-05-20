@@ -4,9 +4,8 @@ import kabanApi from "../../api/kabanApi";
 import { AppContext } from "../../context/AppContext";
 import { toast } from "react-toastify";
 
-export const Board = () => {
+export const Board = ({ viewMode = "all", userId }) => {
   const { projectId } = useContext(AppContext);
-  console.log(projectId);
 
   const [kanbanData, setKanbanData] = useState({
     Todo: [],
@@ -17,8 +16,12 @@ export const Board = () => {
   const fetchTasks = async () => {
     if (!projectId) return;
     try {
-      const response = await kabanApi.getTasksByProjectId(projectId);
-      console.log(response);
+      let response;
+      if (viewMode === "me") {
+        response = await kabanApi.getTasksByUserAndProject(userId, projectId);
+      } else {
+        response = await kabanApi.getTasksByProjectId(projectId);
+      }
 
       if (response.data.success) {
         const tasks = response.data.data;
@@ -48,17 +51,14 @@ export const Board = () => {
 
   useEffect(() => {
     fetchTasks();
-  }, [projectId]);
+  }, [projectId, viewMode]);
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="flex gap-4 items-start">
       {Object.entries(kanbanData).map(([colTitle, tasks]) => (
-        <Column
-          key={colTitle}
-          title={colTitle}
-          tasks={tasks}
-          fetchTasks={fetchTasks}
-        />
+        <div className="w-1/3" key={colTitle}>
+          <Column title={colTitle} tasks={tasks} fetchTasks={fetchTasks} />
+        </div>
       ))}
     </div>
   );
