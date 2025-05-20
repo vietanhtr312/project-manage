@@ -5,8 +5,8 @@ import AddProjectPopup from "../components/wbs/AddProjectPopup";
 import AddMemberPopup from "../components/wbs/AddMemberPopup";
 
 export const WbsPage = () => {
-
-  const { projectStructure, createModule, createTask, assignTask } = useContext(ProjectContext);
+  const { projectStructure, createModule, createTask, assignTask } =
+    useContext(ProjectContext);
   const [moduleId, setModuleId] = useState(null);
   const [parentId, setParentId] = useState(null);
   const [showAddProjectPopup, setShowAddProjectPopup] = useState(false);
@@ -24,31 +24,36 @@ export const WbsPage = () => {
     }
     setModuleId(null);
     setParentId(null);
-  }
+  };
 
-
-
-  return (<>
-    <div className="bg-white/10 backdrop-blur-md">
-      <WBSBoard setModuleId={setModuleId} setParentId={setParentId} setShowAddProjectPopup={setShowAddProjectPopup} setTaskId={setTaskId} setShowAddMemberPopup={setShowAddMemberPopup}/>
-    </div>
-    {
-      showAddProjectPopup && (
+  return (
+    <>
+      <div className="bg-white/10 backdrop-blur-md">
+        <WBSBoard
+          setModuleId={setModuleId}
+          setParentId={setParentId}
+          setShowAddProjectPopup={setShowAddProjectPopup}
+          setTaskId={setTaskId}
+          setShowAddMemberPopup={setShowAddMemberPopup}
+          onAdd={assignTask}
+        />
+      </div>
+      {showAddProjectPopup && (
         <AddProjectPopup
-          type={moduleId ? parentId ? "task" : "submodule" : "module"}
+          type={moduleId ? (parentId ? "task" : "submodule") : "module"}
           onClose={() => setShowAddProjectPopup(false)}
           onAdd={handleAddToProject}
+          assignTask={assignTask}
+          taskId={taskId}
         />
-      )
-    }
-    {
-      showAddMemberPopup && (
+      )}
+      {showAddMemberPopup && (
         <AddMemberPopup
           onClose={() => setShowAddMemberPopup(false)}
           onAdd={assignTask}
           taskId={taskId}
         />
-      )
-    }
-  </>);
+      )}
+    </>
+  );
 };

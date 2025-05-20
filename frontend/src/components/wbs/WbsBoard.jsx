@@ -2,13 +2,28 @@ import React, { useContext, useEffect, useState } from "react";
 import { Minus, UserRoundCheck, UserRoundSearch } from "lucide-react";
 import { ProjectContext } from "../../context/ProjectContext";
 
-export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPopup, setShowAddMemberPopup, setTaskId }) {
+export default function WBSBoard({
+  setModuleId,
+  setParentId,
+  setShowAddProjectPopup,
+  setShowAddMemberPopup,
+  setTaskId,
+  onAdd,
+}) {
   const { projectStructure } = useContext(ProjectContext);
   const [projectName, setProjectName] = useState(projectStructure?.title);
   const [modules, setModules] = useState(projectStructure?.modules || []);
   const [selectedItem, setSelectedItem] = useState(null);
   const [details, setDetails] = useState(null);
-  const { updateModule, deleteModule, updateTask, deleteTask, getTaskById, taskMember, setTaskMember } = useContext(ProjectContext);
+  const {
+    updateModule,
+    deleteModule,
+    updateTask,
+    deleteTask,
+    getTaskById,
+    taskMember,
+    setTaskMember,
+  } = useContext(ProjectContext);
   const [isUpdate, setIsUpdate] = useState(false);
 
   useEffect(() => {
@@ -48,7 +63,9 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
       });
     } else if (type === "submodule") {
       const module = modules.find((mod) => mod._id === moduleId);
-      const submodule = module.submodules.find((sub) => sub._id === submoduleId);
+      const submodule = module.submodules.find(
+        (sub) => sub._id === submoduleId
+      );
       setDetails({
         name: submodule.name,
         description: submodule.description,
@@ -78,19 +95,18 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
       updateModule(submoduleId, details, moduleId);
     } else if (type === "task") {
       if (!submoduleId) {
-        updateTask(taskId, details, moduleId,);
+        updateTask(taskId, details, moduleId);
       } else {
         updateTask(taskId, details, submoduleId, moduleId);
       }
-    };
+    }
 
     setIsUpdate(false);
-  }
+  };
 
   const onUpdate = () => {
     setIsUpdate(!isUpdate);
-  }
-
+  };
 
   const deleteItem = () => {
     if (!selectedItem) return;
@@ -116,20 +132,19 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
     const { type, taskId } = selectedItem;
     setTaskId(taskId);
     setShowAddMemberPopup(true);
-  }
+  };
 
   useEffect(() => {
-    if (taskMember && selectedItem.type === 'task') {
+    if (taskMember && selectedItem.type === "task") {
       setDetails({ ...details, member: taskMember.name });
       setTaskMember(null);
     }
-  }, [taskMember])
+  }, [taskMember]);
 
   return (
     <div className="flex flex-col h-full">
       <div className="bg-gray-100 p-4 border-b flex flex-col items-center ml-[380px] border-2 border-b-0 rounded-tl-lg rounded-tr-lg bg-yellow-50">
-        {
-          projectName &&
+        {projectName && (
           <div className="text-xl font-bold border bg-orange-200 p-2 rounded w-64 text-center flex gap-4 justify-center">
             {projectName}
             <button
@@ -138,24 +153,31 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
             >
               +
             </button>
-          </div>}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-1 overflow-hidden">
         <div className="w-[360px] bg-black/20 px-6 py-4 overflow-auto rounded h-[500px]">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl font-bold text-white">{selectedItem ? selectedItem.type.toUpperCase() : ""}</h2>
-            {selectedItem && selectedItem.type === 'task' && (
+            <h2 className="text-xl font-bold text-white">
+              {selectedItem ? selectedItem.type.toUpperCase() : ""}
+            </h2>
+            {selectedItem && selectedItem.type === "task" && (
               <>
                 {details?.member ? (
-                  <div className="flex items-center gap-2 text-white cursor-pointer" onClick={assignMember}>
+                  <div
+                    className="flex items-center gap-2 text-white cursor-pointer"
+                    onClick={assignMember}
+                  >
                     {details?.member}
                     <UserRoundCheck className="text-white" />
                   </div>
                 ) : (
                   <button onClick={assignMember}>
                     <UserRoundSearch className="text-white" />
-                  </button>)}
+                  </button>
+                )}
               </>
             )}
           </div>
@@ -172,7 +194,9 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
                   </button>
                   <button
                     className="bg-green-500 text-white px-4 py-2 rounded ml-2"
-                    onClick={() => addTask(selectedItem.moduleId, selectedItem.moduleId)}
+                    onClick={() =>
+                      addTask(selectedItem.moduleId, selectedItem.moduleId)
+                    }
                   >
                     + Add Task
                   </button>
@@ -193,7 +217,9 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
                 className="mt-4 w-full p-2 border rounded text-black"
                 value={details?.name}
                 readOnly={!isUpdate}
-                onChange={(e) => setDetails({ ...details, name: e.target.value })}
+                onChange={(e) =>
+                  setDetails({ ...details, name: e.target.value })
+                }
               />
               <div>
                 <strong>Details:</strong>
@@ -202,7 +228,9 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
                   rows="4"
                   value={details?.description}
                   readOnly={!isUpdate}
-                  onChange={(e) => setDetails({ ...details, description: e.target.value })}
+                  onChange={(e) =>
+                    setDetails({ ...details, description: e.target.value })
+                  }
                 />
                 {selectedItem.type === "task" && (
                   <>
@@ -210,56 +238,62 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
                     <input
                       type="date"
                       className="w-full p-2 border rounded text-black"
-                      value={details?.start_date ? details.start_date.split("T")[0] : ""}
+                      value={
+                        details?.start_date
+                          ? details.start_date.split("T")[0]
+                          : ""
+                      }
                       readOnly={!isUpdate}
-                      onChange={(e) => setDetails({ ...details, start_date: e.target.value })}
+                      onChange={(e) =>
+                        setDetails({ ...details, start_date: e.target.value })
+                      }
                     />
                     <strong>Due Date:</strong>
                     <input
                       type="date"
                       className="w-full p-2 border rounded text-black"
-                      value={details?.due_date ? details.due_date.split("T")[0] : ""}
+                      value={
+                        details?.due_date ? details.due_date.split("T")[0] : ""
+                      }
                       readOnly={!isUpdate}
-                      onChange={(e) => setDetails({ ...details, due_date: e.target.value })}
+                      onChange={(e) =>
+                        setDetails({ ...details, due_date: e.target.value })
+                      }
                     />
                   </>
                 )}
               </div>
-              {
-                isUpdate ? (
-                  <div className="flex justify-between pt-8">
-                    <button
-                      className="border border-gray-300 rounded-md bg-white text-red-500 hover:bg-gray-50 px-4 py-2 rounded"
-                      onClick={() => setIsUpdate(false)}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      className="bg-green-500 text-white px-4 py-2 rounded"
-                      onClick={updateItem}
-                    >
-                      Update
-                    </button>
-
-                  </div>
-                ) : (
-                  <div className="flex gap-10 pt-8">
-                    <button
-                      onClick={onUpdate}
-                      className="bg-yellow-500 text-white px-4 py-2 rounded"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={deleteItem}
-                      className="bg-red-500 text-white px-4 py-2 rounded"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )
-              }
-
+              {isUpdate ? (
+                <div className="flex justify-between pt-8">
+                  <button
+                    className="border border-gray-300 rounded-md bg-white text-red-500 hover:bg-gray-50 px-4 py-2 rounded"
+                    onClick={() => setIsUpdate(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    onClick={updateItem}
+                  >
+                    Update
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-10 pt-8">
+                  <button
+                    onClick={onUpdate}
+                    className="bg-yellow-500 text-white px-4 py-2 rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={deleteItem}
+                    className="bg-red-500 text-white px-4 py-2 rounded"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <p className="text-white">Select a item to see details</p>

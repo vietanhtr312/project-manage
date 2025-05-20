@@ -140,10 +140,7 @@ const taskController = {
     getTasksByUserId: async (req, res, next) => {
         try {
             const { userId } = req.params;
-            const tasks = await TaskMember.find({ member: userId })
-                .populate('task')
-                .then((results) => results.map((tm) => tm.task));
-
+            const tasks = await taskService.getTasksByUserId(userId);
             res.status(200).json({ success: true, data: tasks });
         } catch (error) {
             next(error);

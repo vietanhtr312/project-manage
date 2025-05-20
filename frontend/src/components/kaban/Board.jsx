@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 
 export const Board = () => {
   const { projectId } = useContext(AppContext);
-  console.log(projectId);
 
   const [kanbanData, setKanbanData] = useState({
     Todo: [],
@@ -18,7 +17,6 @@ export const Board = () => {
     if (!projectId) return;
     try {
       const response = await kabanApi.getTasksByProjectId(projectId);
-      console.log(response);
 
       if (response.data.success) {
         const tasks = response.data.data;
@@ -51,14 +49,11 @@ export const Board = () => {
   }, [projectId]);
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="flex gap-4 items-start">
       {Object.entries(kanbanData).map(([colTitle, tasks]) => (
-        <Column
-          key={colTitle}
-          title={colTitle}
-          tasks={tasks}
-          fetchTasks={fetchTasks}
-        />
+        <div className="w-1/3" key={colTitle}>
+          <Column title={colTitle} tasks={tasks} fetchTasks={fetchTasks} />
+        </div>
       ))}
     </div>
   );

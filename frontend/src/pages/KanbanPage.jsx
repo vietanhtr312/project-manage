@@ -4,7 +4,6 @@ import { useContext } from "react";
 import { ProjectContext } from "../context/ProjectContext";
 export const KanbanPage = () => {
   const { projectStructure } = useContext(ProjectContext);
-  console.log(projectStructure);
 
   return (
     <div className="px-36">

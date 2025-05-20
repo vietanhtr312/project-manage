@@ -106,7 +106,19 @@ const taskService = {
         })
         if (!tasks || tasks.length == 0) throw new ResourceNotFoundError("You dont have a tasks");
         return tasks;
+    },
+
+    getTasksByUserId: async (userId) => {
+        const taskMembers = await TaskMember.find({ member: userId })
+            .populate('task');
+
+        const tasks = taskMembers
+            .map((tm) => tm.task)
+            .filter((task) => task !== null); // Lọc các task bị null (do task bị xóa nhưng taskMember vẫn tồn tại)
+
+        return tasks;
     }
+
 };
 
 module.exports = taskService;
