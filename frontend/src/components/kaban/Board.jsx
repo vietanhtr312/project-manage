@@ -25,7 +25,6 @@ export const Board = ({ viewMode = "all", userId }) => {
 
       if (response.data.success) {
         const tasks = response.data.data;
-        console.log(tasks);
 
         const grouped = {
           Todo: [],
