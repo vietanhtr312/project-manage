@@ -5,8 +5,8 @@ const ProjectCard = ({project, onClick }) => (
             onClick={() => onClick(project?.project?._id)}
         >
             <div className="absolute left-0 top-[-40px] bg-white rounded-2xl rounded-b-none cursor-pointer group-hover:bg-gray-300 h-10 w-28"></div>
-            <p className="text-left mt-2 ml-4 text-lg font-bold">{project?.project?.title || "Project"}</p>
-            <p className="text-left mt-auto mb-10 ml-4 text-xs text-gray-500">
+            <p className="text-left mt-4 ml-6 text-lg font-bold">{project?.project?.title || "Project"}</p>
+            <p className="text-left mt-auto mb-10 ml-6 text-xs text-gray-500">
                 <span className={`w-2 h-2 rounded-full inline-block mr-2 ${project?.status === 'in progress' ? 'bg-yellow-500' : 'bg-green-300'}`}></span>
                 {project?.status === 'in progress' ? 'In Progress' : 'Completed'}
             </p>

@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SlidersHorizontal, Bell, User, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/userStore";
 import axiosClient from "../api/axiosClient";
+import { AppContext } from "../context/AppContext";
 
 const Header = ({ display, setDisplay }) => {
   const user = useUserStore((state) => state.user);
   const clearUser = useUserStore((state) => state.clearUser);
   const [notifications, setNotifications] = useState([]);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
-
+  const { setProjectId } = useContext(AppContext);
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -72,16 +73,19 @@ const Header = ({ display, setDisplay }) => {
     if (!notification.isRead) {
       try {
         const response = await axiosClient.patch(`/notifications/${notification._id}/marks-read`);
-        if (response.data.success)
+        if (response.data.success) {
           setNotifications((prev) =>
             prev.map((n) =>
               n._id === notification._id ? { ...n, isRead: true } : n
             )
           );
+        }
       } catch (error) {
         console.error("Error marking notification as read:", error);
       }
     }
+    const projectId = notification.url.split("/")[1];
+    setProjectId(projectId);
     setShowNotifications(false);
     setNewNotificationCount((prev) => prev - 1);
     navigate('/kaban');

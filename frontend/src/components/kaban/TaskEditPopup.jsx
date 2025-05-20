@@ -23,10 +23,6 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
     fetchTaskDetails();
   }, [task._id]);
 
-  console.log(member);
-
-
-
   const formatDate = (date) => {
     if (!date) return "";
     const d = new Date(date);
@@ -92,7 +88,6 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
             <label className="block mb-1 font-medium">Details:</label>
             <textarea
               name="description"
-              disabled={!isLeader}
               value={formData.description}
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"

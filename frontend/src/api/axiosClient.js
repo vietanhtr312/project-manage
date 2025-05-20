@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
-const token = localStorage.getItem('token');
+const state = localStorage.getItem('user');
+const token = state ? JSON.parse(state).state.token : null;
 
 const axiosClient = axios.create({
   baseURL: `${backendUrl}/api/v1`,

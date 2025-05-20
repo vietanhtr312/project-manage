@@ -15,7 +15,7 @@ const wbsApi = {
     getTaskById: (taskId) => axiosClient.get(`/tasks/${taskId}`),
 
     getTaskMembers: (taskId) => axiosClient.get(`/taskmembers/tasks/${taskId}/members`),
-    assignTask: (taskId, userId) => axiosClient.post(`/taskmembers/tasks/${taskId}/members`, { userId }),
+    assignTask: (taskId, userId, projectId) => axiosClient.post(`/taskmembers/tasks/${taskId}/members`, { userId, projectId }),
     unassignTask: (taskId, userId) => axiosClient.post(`/taskmembers/tasks/${taskId}/members/${userId}`),
 }
 

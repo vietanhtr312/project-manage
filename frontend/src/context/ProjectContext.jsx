@@ -386,7 +386,7 @@ export const ProjectContextProvider = (props) => {
 
   const assignTask = async (taskId, userId) => {
     try {
-      const response = await wbsApi.assignTask(taskId, userId);
+      const response = await wbsApi.assignTask(taskId, userId, projectId);
       if (response.data.success) {
         toast.success("Task assigned successfully");
         setTaskMember(response.data.data.member);
