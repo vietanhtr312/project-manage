@@ -22,6 +22,7 @@ export const Board = () => {
 
       if (response.data.success) {
         const tasks = response.data.data;
+        console.log(tasks);
 
         const grouped = {
           Todo: [],
@@ -52,7 +53,12 @@ export const Board = () => {
   return (
     <div className="grid grid-cols-3 gap-4">
       {Object.entries(kanbanData).map(([colTitle, tasks]) => (
-        <Column key={colTitle} title={colTitle} tasks={tasks} />
+        <Column
+          key={colTitle}
+          title={colTitle}
+          tasks={tasks}
+          fetchTasks={fetchTasks}
+        />
       ))}
     </div>
   );

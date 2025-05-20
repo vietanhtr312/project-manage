@@ -39,12 +39,38 @@ const taskController = {
         try {
             const { id } = req.params;
             const updateData = req.body;
-            const task = await taskService.updateTask(id, updateData);
-            res.status(200).json({ success: true, data: task });
+            const userId = req.user.id;
+
+            const task = await taskService.getTaskById(id);
+            if (!task) throw new Error('Task not found');
+
+            const module = task.module;
+            const projectMember = await ProjectMember.findOne({
+                project: module.parent,
+                member: userId,
+            });
+
+            if (!projectMember) {
+                return res.status(403).json({ success: false, message: 'You are not part of this project.' });
+            }
+
+            const isLeader = projectMember.role === 'leader';
+            const isMember = projectMember.role === 'member';
+
+            if (isMember) {
+                const nonAllowedKeys = Object.keys(updateData).filter(k => k !== 'progress');
+                if (nonAllowedKeys.length > 0) {
+                    return res.status(403).json({ success: false, message: 'Member chỉ được cập nhật progress.' });
+                }
+            }
+
+            const updatedTask = await taskService.updateTask(id, updateData);
+            return res.status(200).json({ success: true, data: updatedTask });
         } catch (error) {
             next(error);
         }
     },
+
 
     deleteTask: async (req, res, next) => {
         try {

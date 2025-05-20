@@ -8,7 +8,7 @@ export const ProjectContext = createContext();
 export const ProjectContextProvider = (props) => {
   const [projectStructure, setProjectStructure] = useState(null);
   const { projectId } = useContext(AppContext);
-  console.log(projectId);
+  console.log(projectStructure);
 
   const fetchProjectStructure = async () => {
     try {
