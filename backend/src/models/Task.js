@@ -32,7 +32,7 @@ const TaskSchema = new mongoose.Schema({
 		default: TaskStatus.TO_DO
 	},
 	progress: {
-		type: Number,
+		type: String,
 	}
 }, { timestamps: true });
 

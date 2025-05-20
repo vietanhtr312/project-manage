@@ -9,12 +9,12 @@ export const ProjectContextProvider = (props) => {
   const [projectStructure, setProjectStructure] = useState(null);
   const [taskMember, setTaskMember] = useState(null);
   const { projectId } = useContext(AppContext);
+  console.log(projectStructure);
 
   const fetchProjectStructure = async () => {
     try {
       const response = await wbsApi.getProjectStructure(projectId);
       if (response.data.success) {
-
         setProjectStructure(response.data.data);
       } else {
         console.error("Error fetching project structure:", response.statusText);
@@ -80,16 +80,17 @@ export const ProjectContextProvider = (props) => {
           setProjectStructure((prev) => {
             const updatedModules = prev.modules.map((item) => {
               if (item._id === parentId) {
-                const updatedSubmodules = (item.submodules || []).map((submodule) => {
-                  if (submodule._id === moduleId) {
-                    return {
-                      ...submodule,
-                      name: module.name,
-                      description: module.description,
-                    };
+                const updatedSubmodules = (item.submodules || []).map(
+                  (submodule) => {
+                    if (submodule._id === moduleId) {
+                      return {
+                        ...submodule,
+                        name: module.name,
+                        description: module.description,
+                      };
+                    }
+                    return submodule;
                   }
-                  return submodule;
-                }
                 );
                 return {
                   ...item,
@@ -104,8 +105,7 @@ export const ProjectContextProvider = (props) => {
             };
           });
         } else {
-          setProjectStructure((prev) =>
-          ({
+          setProjectStructure((prev) => ({
             ...prev,
             modules: prev.modules.map((item) => {
               if (item._id === moduleId) {
@@ -117,8 +117,7 @@ export const ProjectContextProvider = (props) => {
               }
               return item;
             }),
-          })
-          );
+          }));
         }
       } else {
         console.error("Error updating module:", response.statusText);
@@ -136,7 +135,9 @@ export const ProjectContextProvider = (props) => {
           setProjectStructure((prev) => {
             const updatedModules = prev.modules.map((item) => {
               if (item._id === parentId) {
-                const updatedSubmodules = (item.submodules || []).filter((submodule) => submodule._id !== moduleId);
+                const updatedSubmodules = (item.submodules || []).filter(
+                  (submodule) => submodule._id !== moduleId
+                );
                 return {
                   ...item,
                   submodules: updatedSubmodules,
@@ -185,15 +186,17 @@ export const ProjectContextProvider = (props) => {
           setProjectStructure((prev) => {
             const updatedModules = prev.modules.map((item) => {
               if (item._id === parentId) {
-                const updatedSubmodules = (item.submodules || []).map((submodule) => {
-                  if (submodule._id === moduleId) {
-                    return {
-                      ...submodule,
-                      tasks: [...(submodule.tasks || []), response.data.data],
-                    };
+                const updatedSubmodules = (item.submodules || []).map(
+                  (submodule) => {
+                    if (submodule._id === moduleId) {
+                      return {
+                        ...submodule,
+                        tasks: [...(submodule.tasks || []), response.data.data],
+                      };
+                    }
+                    return submodule;
                   }
-                  return submodule;
-                });
+                );
 
                 return {
                   ...item,
@@ -238,27 +241,29 @@ export const ProjectContextProvider = (props) => {
           setProjectStructure((prev) => {
             const updatedModules = prev.modules.map((item) => {
               if (item._id === parentId) {
-                const updatedSubmodules = (item.submodules || []).map((submodule) => {
-                  if (submodule._id === moduleId) {
-                    const updatedTasks = (submodule.tasks || []).map((t) => {
-                      if (t._id === taskId) {
-                        return {
-                          ...t,
-                          name: task.name,
-                          description: task.description,
-                          start_date: task.start_date,
-                          due_date: task.due_date,
-                        };
-                      }
-                      return t;
-                    });
-                    return {
-                      ...submodule,
-                      tasks: updatedTasks,
-                    };
+                const updatedSubmodules = (item.submodules || []).map(
+                  (submodule) => {
+                    if (submodule._id === moduleId) {
+                      const updatedTasks = (submodule.tasks || []).map((t) => {
+                        if (t._id === taskId) {
+                          return {
+                            ...t,
+                            name: task.name,
+                            description: task.description,
+                            start_date: task.start_date,
+                            due_date: task.due_date,
+                          };
+                        }
+                        return t;
+                      });
+                      return {
+                        ...submodule,
+                        tasks: updatedTasks,
+                      };
+                    }
+                    return submodule;
                   }
-                  return submodule;
-                });
+                );
 
                 return {
                   ...item,
@@ -274,8 +279,7 @@ export const ProjectContextProvider = (props) => {
             };
           });
         } else {
-          setProjectStructure((prev) =>
-          ({
+          setProjectStructure((prev) => ({
             ...prev,
             modules: prev.modules.map((item) => {
               if (item._id === moduleId) {
@@ -298,8 +302,7 @@ export const ProjectContextProvider = (props) => {
               }
               return item;
             }),
-          })
-          );
+          }));
         }
       } else {
         console.error("Error updating task:", response.statusText);
@@ -307,7 +310,7 @@ export const ProjectContextProvider = (props) => {
     } catch (error) {
       console.error("Error updating task:", error);
     }
-  }
+  };
 
   const deleteTask = async (taskId, moduleId, parentId) => {
     try {
@@ -317,16 +320,20 @@ export const ProjectContextProvider = (props) => {
           setProjectStructure((prev) => {
             const updatedModules = prev.modules.map((item) => {
               if (item._id === parentId) {
-                const updatedSubmodules = (item.submodules || []).map((submodule) => {
-                  if (submodule._id === moduleId) {
-                    const updatedTasks = (submodule.tasks || []).filter((task) => task._id !== taskId);
-                    return {
-                      ...submodule,
-                      tasks: updatedTasks,
-                    };
+                const updatedSubmodules = (item.submodules || []).map(
+                  (submodule) => {
+                    if (submodule._id === moduleId) {
+                      const updatedTasks = (submodule.tasks || []).filter(
+                        (task) => task._id !== taskId
+                      );
+                      return {
+                        ...submodule,
+                        tasks: updatedTasks,
+                      };
+                    }
+                    return submodule;
                   }
-                  return submodule;
-                });
+                );
 
                 return {
                   ...item,
@@ -346,7 +353,9 @@ export const ProjectContextProvider = (props) => {
             ...prev,
             modules: prev.modules.map((item) => {
               if (item._id === moduleId) {
-                const updatedTasks = (item.tasks || []).filter((task) => task._id !== taskId);
+                const updatedTasks = (item.tasks || []).filter(
+                  (task) => task._id !== taskId
+                );
                 return {
                   ...item,
                   tasks: updatedTasks,
@@ -362,7 +371,7 @@ export const ProjectContextProvider = (props) => {
     } catch (error) {
       console.error("Error deleting task:", error);
     }
-  }
+  };
 
   const getTaskMembers = async (taskId) => {
     try {
@@ -385,21 +394,23 @@ export const ProjectContextProvider = (props) => {
         setTaskMember(response.data.data.member);
         setProjectStructure((prev) => {
           const updatedModules = prev.modules.map((item) => {
-            const updatedSubmodules = (item.submodules || []).map((submodule) => {
-              const updatedTasks = (submodule.tasks || []).map((task) => {
-                if (task._id === taskId) {
-                  return {
-                    ...task,
-                    members: response.data.data.member,
-                  };
-                }
-                return task;
-              });
-              return {
-                ...submodule,
-                tasks: updatedTasks,
-              };
-            });
+            const updatedSubmodules = (item.submodules || []).map(
+              (submodule) => {
+                const updatedTasks = (submodule.tasks || []).map((task) => {
+                  if (task._id === taskId) {
+                    return {
+                      ...task,
+                      members: response.data.data.member,
+                    };
+                  }
+                  return task;
+                });
+                return {
+                  ...submodule,
+                  tasks: updatedTasks,
+                };
+              }
+            );
             return {
               ...item,
               submodules: updatedSubmodules,
@@ -411,7 +422,6 @@ export const ProjectContextProvider = (props) => {
             modules: updatedModules,
           };
         });
-          
       } else {
         console.error("Error assigning task:", response.statusText);
       }
@@ -444,8 +454,7 @@ export const ProjectContextProvider = (props) => {
     } catch (error) {
       console.error("Error fetching project members:", error);
     }
-  }
-
+  };
 
   useEffect(() => {
     if (projectId) {
@@ -471,7 +480,7 @@ export const ProjectContextProvider = (props) => {
         unassignTask,
         getProjectMembers,
         taskMember,
-        setTaskMember
+        setTaskMember,
       }}
     >
       {props.children}

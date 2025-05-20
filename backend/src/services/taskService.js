@@ -3,21 +3,24 @@ const Module = require('../models/Module');
 const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 const TaskMember = require('../models/TaskMember');
 
-const getAllModulesByParent = async (parentId) => {
-    const result = [];
+const getAllModuleIdsFromParent = async (parentId) => {
+    const allIds = [];
     const queue = [parentId];
+
 
     while (queue.length > 0) {
         const current = queue.shift();
-        result.push(current);
+        allIds.push(current);
 
         const children = await Module.find({ parent: current }).select('_id');
         for (const child of children) {
             queue.push(child._id.toString());
         }
     }
+    console.log(allIds);
 
-    return result;
+
+    return allIds;
 };
 
 const taskService = {
@@ -43,7 +46,7 @@ const taskService = {
 
     getTaskById: async (taskId) => {
         const task = await Task.findById(taskId).populate('module');
-        const taskmember = await TaskMember.findOne({task: taskId})
+        const taskmember = await TaskMember.findOne({ task: taskId })
 
         if (!task) {
             throw new ResourceNotFoundError("Task not found");
@@ -52,7 +55,7 @@ const taskService = {
         if (taskmember) {
             await taskmember.populate('member', 'name email');
         }
-        
+
         return { ...task.toObject(), member: taskmember ? taskmember.member : null };
     },
 
@@ -75,13 +78,22 @@ const taskService = {
     },
 
     getTasksByProjectId: async (projectId) => {
-        const moduleIds = await getAllModulesByParent(projectId);
+        // Tìm các module gốc của project
+        const rootModules = await Module.find({ parent: projectId }).select('_id');
+        if (!rootModules.length) return [];
 
-        const tasks = await Task.find({ module: { $in: moduleIds } });
+        let allModuleIds = [];
+        for (const mod of rootModules) {
+            const ids = await getAllModuleIdsFromParent(mod._id.toString());
+            allModuleIds = allModuleIds.concat(ids);
+        }
+
+        // Truy vấn tất cả task theo moduleIds
+        const tasks = await Task.find({ module: { $in: allModuleIds } });
 
         return tasks;
     },
-    getTasksDueIn: async(days) => {
+    getTasksDueIn: async (days) => {
         const now = new Date();
         const due_date = new Date(now);
         due_date.setDate(now.getDate() + days);
@@ -89,8 +101,8 @@ const taskService = {
             due_date: {
                 $get: now,
                 $let: due_date
-            }, 
-            status:{$ne: 'done'}
+            },
+            status: { $ne: 'done' }
         })
         if (!tasks || tasks.length == 0) throw new ResourceNotFoundError("You dont have a tasks");
         return tasks;
