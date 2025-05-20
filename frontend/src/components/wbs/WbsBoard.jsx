@@ -167,7 +167,7 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
             <div className="text-white mb-4">
               {isLeader &&
                 <>
-                  ({selectedItem.type === "module" ? (
+                  {selectedItem.type === "module" ? (
                     <div className="mt-4">
                       <button
                         className="bg-purple-500 text-white px-4 py-2 rounded"
@@ -193,7 +193,7 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
                         + Add Task
                       </button>
                     </div>
-                  ) : null})
+                  ) : null}
                 </>
               }
               <input
@@ -234,7 +234,7 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
               </div>
               {isLeader &&
                 <>
-                  ({
+                  {
                     isUpdate ? (
                       <div className="flex justify-between pt-8">
                         <button
@@ -267,7 +267,7 @@ export default function WBSBoard({ setModuleId, setParentId, setShowAddProjectPo
                         </button>
                       </div>
                     )
-                  })
+                  }
                 </>
               }
 

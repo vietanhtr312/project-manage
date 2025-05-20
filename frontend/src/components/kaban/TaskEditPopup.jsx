@@ -1,16 +1,31 @@
 import React, { useState, useEffect } from "react";
+import { ChevronRight } from "lucide-react";
 import { useContext } from "react";
-import { AppContext } from "../../context/AppContext";
 import { ProjectContext } from "../../context/ProjectContext";
 import useUserStore from "../../store/userStore";
-const TaskEditPopup = ({ task, onClose, onSave }) => {
+const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
   const user = useUserStore((state) => state.user);
-  const { projectStructure } = useContext(ProjectContext);
+  const { projectStructure, getTaskById } = useContext(ProjectContext);
   const [errorMsg, setErrorMsg] = useState("");
-  console.log(projectStructure);
-  console.log(user);
   const isLeader = projectStructure.leader === user.id;
-  console.log(isLeader);
+  const [member, setMember] = useState(null);
+
+  const fetchTaskDetails = async () => {
+    try {
+      const res = await getTaskById(task._id);
+      setMember(res.member)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+    fetchTaskDetails();
+  }, [task._id]);
+
+  console.log(member);
+
+
 
   const formatDate = (date) => {
     if (!date) return "";
@@ -57,51 +72,35 @@ const TaskEditPopup = ({ task, onClose, onSave }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 popup-overlay bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-md shadow-md w-full max-w-md">
-        <h2 className="text-xl font-bold text-blue-900 mb-4">
-          {task?.name || "New Task"}
-        </h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-blue-900 mb-4">
+            {task?.name || "New Task"}
+          </h2>
+          {member && member.name}
+        </div>
 
         {errorMsg && <p className="text-red-600 mb-2">{errorMsg}</p>}
 
+        <div className="text-blue-800 font-medium flex items-center">
+          <span className="text-black mr-2">From: </span>
+          {formData.start_date}
+          <span className="text-black mx-2">To: </span>
+          {formData.due_date}
+        </div>
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            disabled={!isLeader}
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 mb-3 rounded"
-            placeholder="Task name"
-          />
-
-          <div className="grid grid-cols-2 gap-4 mb-3">
-            <input
-              type="date"
-              name="start_date"
+          <div className="my-3">
+            <label className="block mb-1 font-medium">Details:</label>
+            <textarea
+              name="description"
               disabled={!isLeader}
-              value={formData.start_date}
+              value={formData.description}
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
-            />
-            <input
-              type="date"
-              name="due_date"
-              disabled={!isLeader}
-              value={formData.due_date}
-              onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
+              rows="3"
+              placeholder="// To do"
+              readOnly={isSeeDetail}
             />
           </div>
-
-          <textarea
-            name="description"
-            disabled={!isLeader}
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 mb-3 rounded"
-            rows="3"
-            placeholder="Description"
-          />
 
           <div className="mb-3">
             <label className="block mb-1 font-medium">Progress (%)</label>
@@ -111,44 +110,44 @@ const TaskEditPopup = ({ task, onClose, onSave }) => {
               value={formData.progress}
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
+              readOnly={isSeeDetail}
+              min="0"
+              max="100"
             />
           </div>
 
-          <div className="flex justify-between items-center">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Trạng thái
-              </label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                disabled={!isLeader}
-                className={`w-full border px-3 py-2 rounded ${
-                  !isLeader ? "bg-gray-100 text-gray-500" : ""
+          <div className="mb-4">
+            <label className="block font-medium mb-1">
+              Status
+            </label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              disabled={!isLeader || isSeeDetail}
+              className={`w-full border px-3 py-2 rounded ${!isLeader ? "bg-gray-100 text-gray-500" : ""
                 }`}
-              >
-                <option value="to-do">To Do</option>
-                <option value="in-progress">In Progress</option>
-                <option value="done">Done</option>
-              </select>
-            </div>
+            >
+              <option value="to-do">To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
 
-            <div className="space-x-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 border text-red-500 border-gray-300 rounded hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Save
-              </button>
-            </div>
+          <div className="space-x-2 flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border text-red-500 border-gray-300 rounded hover:bg-gray-100"
+            >
+              {isSeeDetail ? "Close" : "Cancel"}
+            </button>
+            { !isSeeDetail && <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Save
+            </button>}
           </div>
         </form>
       </div>

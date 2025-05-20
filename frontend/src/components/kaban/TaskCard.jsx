@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PenLine, Trash } from "lucide-react";
+import { PenLine, Eye } from "lucide-react";
 import { Progress } from "antd";
 import TaskEditPopup from "./TaskEditPopup";
 import kabanApi from "../../api/kabanApi";
@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 export const TaskCard = ({ task, fetchTasks }) => {
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [currentTask, setCurrentTask] = useState(task);
+  const [isSeeDetail, setIsSeeDetail] = useState(false);
+
   const getColor = () => {
     if (currentTask?.progress >= 100) return "#52c41a";
     if (currentTask?.progress < 30) return "#ff4d4f";
@@ -32,17 +34,10 @@ export const TaskCard = ({ task, fetchTasks }) => {
     setShowEditPopup(false);
   };
 
-  const handleDelete = async () => {
-    try {
-      const res = await kabanApi.deleteTask(currentTask._id);
-      if (res.data.success) {
-        setCurrentTask(res.data.data);
-        fetchTasks();
-      }
-    } catch (error) {
-      toast.error("delete faild");
-    }
-  };
+  const handleSeeDetails = () => {
+    setShowEditPopup(true)
+    setIsSeeDetail(true);
+  }
 
   return (
     <div className="bg-white p-2 shadow-sm rounded-lg flex flex-col gap-3">
@@ -58,10 +53,10 @@ export const TaskCard = ({ task, fetchTasks }) => {
         />
       </div>
       <div className="flex justify-between">
-        <Trash
+        <Eye
           className="cursor-pointer hover:text-red-500"
           size={14}
-          onClick={handleDelete}
+          onClick={handleSeeDetails}
         />
         <PenLine
           className="cursor-pointer hover:text-blue-500"
@@ -73,8 +68,9 @@ export const TaskCard = ({ task, fetchTasks }) => {
       {showEditPopup && (
         <TaskEditPopup
           task={currentTask}
-          onClose={() => setShowEditPopup(false)}
+          onClose={() => {setShowEditPopup(false); setIsSeeDetail(false);}}
           onSave={handleUpdateTask}
+          isSeeDetail={isSeeDetail}
         />
       )}
     </div>
