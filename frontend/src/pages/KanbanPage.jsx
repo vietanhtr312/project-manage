@@ -14,17 +14,20 @@ export const KanbanPage = () => {
 
   return (
     <div className="px-36">
-      <h2 className="text-2xl font-extrabold text-white tracking-tight py-5">
-        <span className="text-blue-800">Kanban Board</span> {projectStructure?.title}
-      </h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-extrabold text-white tracking-tight py-5">
+          <span className="text-blue-800">Kanban Board</span>{" "}
+          {projectStructure?.title}
+        </h2>
 
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={toggleMode}
-          className="px-4 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
-        >
-          {viewMode === "all" ? "All Tasks" : "My Tasks"}
-        </button>
+        <div className="flex justify-end mb-4 mt-7">
+          <button
+            onClick={toggleMode}
+            className="px-4 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
+          >
+            {viewMode === "all" ? "All Tasks" : "My Tasks"}
+          </button>
+        </div>
       </div>
 
       <div className="bg-white/10 rounded-xl p-3">
