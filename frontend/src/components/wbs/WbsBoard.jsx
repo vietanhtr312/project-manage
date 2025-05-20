@@ -197,7 +197,6 @@ export default function WBSBoard({
             <div className="text-white mb-4">
               {isLeader && (
                 <>
-                  (
                   {selectedItem.type === "module" ? (
                     <div className="mt-4">
                       <button
@@ -230,7 +229,6 @@ export default function WBSBoard({
                       </button>
                     </div>
                   ) : null}
-                  )
                 </>
               )}
               <input
@@ -285,39 +283,40 @@ export default function WBSBoard({
               </div>
               {isLeader && (
                 <>
-                  (
-                  {isUpdate ? (
-                    <div className="flex justify-between pt-8">
-                      <button
-                        className="border border-gray-300 rounded-md bg-white text-red-500 hover:bg-gray-50 px-4 py-2 rounded"
-                        onClick={() => setIsUpdate(false)}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="bg-green-500 text-white px-4 py-2 rounded"
-                        onClick={updateItem}
-                      >
-                        Update
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex gap-10 pt-8">
-                      <button
-                        onClick={onUpdate}
-                        className="bg-yellow-500 text-white px-4 py-2 rounded"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={deleteItem}
-                        className="bg-red-500 text-white px-4 py-2 rounded"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                  )
+                  {
+                    isUpdate ? (
+                      <div className="flex justify-between pt-8">
+                        <button
+                          className="border border-gray-300 rounded-md bg-white text-red-500 hover:bg-gray-50 px-4 py-2 rounded"
+                          onClick={() => setIsUpdate(false)}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          className="bg-green-500 text-white px-4 py-2 rounded"
+                          onClick={updateItem}
+                        >
+                          Update
+                        </button>
+
+                      </div>
+                    ) : (
+                      <div className="flex gap-10 pt-8">
+                        <button
+                          onClick={onUpdate}
+                          className="bg-yellow-500 text-white px-4 py-2 rounded"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={deleteItem}
+                          className="bg-red-500 text-white px-4 py-2 rounded"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )
+                  }
                 </>
               )}
             </div>

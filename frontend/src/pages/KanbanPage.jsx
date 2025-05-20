@@ -14,8 +14,8 @@ export const KanbanPage = () => {
 
   return (
     <div className="px-36">
-      <h2 className="text-2xl font-bold py-5 text-white">
-        Manage Project {projectStructure?.title}
+      <h2 className="text-2xl font-extrabold text-white tracking-tight py-5">
+        <span className="text-blue-800">Kanban Board</span> {projectStructure?.title}
       </h2>
 
       <div className="flex justify-end mb-4">
