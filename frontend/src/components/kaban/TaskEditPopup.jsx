@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useContext } from "react";
-import { AppContext } from "../../context/AppContext";
 import { ProjectContext } from "../../context/ProjectContext";
 import useUserStore from "../../store/userStore";
 const TaskEditPopup = ({ task, onClose, onSave }) => {
   const user = useUserStore((state) => state.user);
   const { projectStructure } = useContext(ProjectContext);
   const [errorMsg, setErrorMsg] = useState("");
-  console.log(projectStructure);
-  console.log(user);
   const isLeader = projectStructure.leader === user.id;
-  console.log(isLeader);
 
   const formatDate = (date) => {
     if (!date) return "";
@@ -67,7 +63,7 @@ const TaskEditPopup = ({ task, onClose, onSave }) => {
           <input
             type="text"
             name="name"
-            disabled={!isLeader}
+            disabled={true}
             value={formData.name}
             onChange={handleChange}
             className="w-full border px-3 py-2 mb-3 rounded"
@@ -78,7 +74,7 @@ const TaskEditPopup = ({ task, onClose, onSave }) => {
             <input
               type="date"
               name="start_date"
-              disabled={!isLeader}
+              disabled={true}
               value={formData.start_date}
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
@@ -86,7 +82,7 @@ const TaskEditPopup = ({ task, onClose, onSave }) => {
             <input
               type="date"
               name="due_date"
-              disabled={!isLeader}
+              disabled={true}
               value={formData.due_date}
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
@@ -95,7 +91,6 @@ const TaskEditPopup = ({ task, onClose, onSave }) => {
 
           <textarea
             name="description"
-            disabled={!isLeader}
             value={formData.description}
             onChange={handleChange}
             className="w-full border px-3 py-2 mb-3 rounded"
@@ -123,7 +118,6 @@ const TaskEditPopup = ({ task, onClose, onSave }) => {
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                disabled={!isLeader}
                 className={`w-full border px-3 py-2 rounded ${
                   !isLeader ? "bg-gray-100 text-gray-500" : ""
                 }`}

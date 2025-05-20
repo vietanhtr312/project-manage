@@ -9,8 +9,6 @@ export const ProjectContextProvider = (props) => {
   const [projectStructure, setProjectStructure] = useState(null);
   const [taskMember, setTaskMember] = useState(null);
   const { projectId } = useContext(AppContext);
-  console.log(projectStructure);
-
   const fetchProjectStructure = async () => {
     try {
       const response = await wbsApi.getProjectStructure(projectId);

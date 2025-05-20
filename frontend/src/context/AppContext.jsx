@@ -9,7 +9,6 @@ export const AppContextProvider = (props) => {
 
   const [userData, setUserData] = useState(null);
   const token = localStorage.getItem("token");
-  console.log(userData);
 
   const [projectId, setProjectId] = useState(null);
   const [projects, setProjects] = useState([]);

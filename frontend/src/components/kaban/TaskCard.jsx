@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 export const TaskCard = ({ task, fetchTasks }) => {
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [currentTask, setCurrentTask] = useState(task);
+
   const getColor = () => {
     if (currentTask?.progress >= 100) return "#52c41a";
     if (currentTask?.progress < 30) return "#ff4d4f";
@@ -20,7 +21,6 @@ export const TaskCard = ({ task, fetchTasks }) => {
   const handleUpdateTask = async (updatedTask) => {
     try {
       const res = await kabanApi.updateTask(currentTask._id, updatedTask);
-      console.log(res);
 
       if (res.data.success) {
         setCurrentTask(res.data.data);

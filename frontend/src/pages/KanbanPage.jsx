@@ -1,18 +1,34 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { Board } from "../components/kaban/Board";
-import { useContext } from "react";
 import { ProjectContext } from "../context/ProjectContext";
+import useUserStore from "../store/userStore";
+
 export const KanbanPage = () => {
   const { projectStructure } = useContext(ProjectContext);
-  console.log(projectStructure);
+  const user = useUserStore((state) => state.user);
+  const [viewMode, setViewMode] = useState("all");
+
+  const toggleMode = () => {
+    setViewMode((prev) => (prev === "all" ? "me" : "all"));
+  };
 
   return (
     <div className="px-36">
       <h2 className="text-2xl font-bold py-5 text-white">
         Manage Project {projectStructure?.title}
       </h2>
-      <div className=" bg-white/10 rounded-xl p-3">
-        <Board />
+
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={toggleMode}
+          className="px-4 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
+        >
+          {viewMode === "all" ? "All Tasks" : "My Tasks"}
+        </button>
+      </div>
+
+      <div className="bg-white/10 rounded-xl p-3">
+        <Board viewMode={viewMode} userId={user?.id} />
       </div>
     </div>
   );

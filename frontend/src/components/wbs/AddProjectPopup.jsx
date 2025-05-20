@@ -1,20 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ProjectContext } from "../../context/ProjectContext";
-
+import React, { useEffect, useState } from "react";
 const AddProjectPopup = ({ type = "module", onClose, onAdd }) => {
   const [formData, setFormData] = useState({
     name: "",
     start_date: "",
     due_date: "",
     description: "",
-    member: ""
+    member: "",
   });
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -25,9 +22,12 @@ const AddProjectPopup = ({ type = "module", onClose, onAdd }) => {
 
   const getTitleText = () => {
     switch (type) {
-      case "submodule": return "Add Submodule";
-      case "task": return "Add Task";
-      default: return "Add Module";
+      case "submodule":
+        return "Add Submodule";
+      case "task":
+        return "Add Task";
+      default:
+        return "Add Module";
     }
   };
 
@@ -36,7 +36,9 @@ const AddProjectPopup = ({ type = "module", onClose, onAdd }) => {
       <div className="bg-white rounded-md p-6 pb-2 w-full max-w-md min-h-[500px] flex flex-col justify-between">
         <div>
           <div className="flex justify-between items-center mb-2">
-            <h2 className="text-xl font-bold text-blue-900">{getTitleText()}</h2>
+            <h2 className="text-xl font-bold text-blue-900">
+              {getTitleText()}
+            </h2>
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700 text-2xl"
@@ -67,15 +69,18 @@ const AddProjectPopup = ({ type = "module", onClose, onAdd }) => {
               />
             </div>
 
-            {
-              type == "task" &&
+            {type == "task" && (
               <div className="flex gap-4 mb-8">
                 <div className="w-1/2">
                   <label className="block text-gray-700 mb-2">Start</label>
                   <input
                     type="date"
                     name="start_date"
-                    value={formData.start_date ? formData.start_date.slice(0, 10) : ''}
+                    value={
+                      formData.start_date
+                        ? formData.start_date.slice(0, 10)
+                        : ""
+                    }
                     onChange={handleChange}
                     className="w-full p-2 border rounded-md"
                   />
@@ -85,13 +90,15 @@ const AddProjectPopup = ({ type = "module", onClose, onAdd }) => {
                   <input
                     type="date"
                     name="due_date"
-                    value={formData.due_date ? formData.due_date.slice(0, 10) : ''}
+                    value={
+                      formData.due_date ? formData.due_date.slice(0, 10) : ""
+                    }
                     onChange={handleChange}
                     className="w-full p-2 border rounded-md"
                   />
                 </div>
               </div>
-            }
+            )}
           </div>
         </div>
         <div className="flex justify-end gap-6 pr-4 mb-8">
