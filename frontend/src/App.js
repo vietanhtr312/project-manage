@@ -8,20 +8,22 @@ import { WbsPage } from './pages/WbsPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { ToastContainer } from 'react-toastify';
+import RequireAuth from './components/RequireAuth';
+
 function App() {
   return (
     <>
       <ToastContainer />
       <Router>
         <Routes>
-          <Route element={<MainLayout />}>
+          <Route element={<RequireAuth><MainLayout /></RequireAuth>}>
             <Route path="/" element={<HomePage />} />
             <Route element={<ProjectManagerLayout />}>
               <Route path="/kaban" element={<KanbanPage />} />
               <Route path="/wbs" element={<WbsPage />} />
             </Route>
-
           </Route>
+
           <Route path='/login' element={<LoginPage />} />
           <Route path='/signup' element={<SignupPage />} />
         </Routes>
