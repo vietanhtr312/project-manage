@@ -23,12 +23,26 @@ const ProjectFolder = ({ onAddNewClick, setProject, onUpdateClick }) => {
   const handlefetchProjects = async () => {
     try {
       const response = await projectApi.getProjects(user.id);
-      if (response.data.success) setProjects(response.data.data);
+      if (response.data.success) {
+        setProjects(response.data.data);
+        if (response.data.data.length > 0) {
+          setProjectId(response.data.data[0].project._id);
+          fetchProjectDetails(response.data.data[0].project._id);
+          setShowDetails(true);
+        } else {
+          setProjectId(null);
+          setShowDetails(false);
+        }
+      }
       else console.error(response.data.message);
     } catch (error) {
       console.error("Error fetching project:", error);
     }
   };
+
+  useEffect(() => {
+    handlefetchProjects();
+  }, []);
 
   useEffect(() => {
     handlefetchProjects();
@@ -142,15 +156,19 @@ const ProjectFolder = ({ onAddNewClick, setProject, onUpdateClick }) => {
                 </p>
               </div>
               <div className="mt-auto mb-10 flex flex-row gap-10">
-                <button className="text-black py-2 px-4 rounded-lg bg-yellow-100 hover:bg-yellow-500 hover:text-white" onClick={handleUpdateProject}>
-                  Update
-                </button>
+                {
+                  projectDetails?.leader?.name === user.name && (
+                    <button className="text-black py-2 px-4 rounded-lg bg-yellow-100 hover:bg-yellow-500 hover:text-white" onClick={handleUpdateProject}>
+                      Update
+                    </button>
+                  )
+                }
                 <button
                   onClick={handleManageClick}
                   className="h-10 text-black py-2 pl-4 pr-2 rounded-lg bg-green-100 hover:bg-green-500 hover:text-white flex items-center"
                 >
                   <span className="mb-1" onClick={() => { }}>
-                    Manage
+                    {projectDetails?.leader?.name === user.name ? "Manage" : "View"}
                   </span>
                   <ChevronRight />
                 </button>

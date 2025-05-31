@@ -147,7 +147,7 @@ export default function WBSBoard({
   return (
     <div className="flex flex-col h-full">
       <div className="bg-gray-100 p-4 border-b flex flex-col items-center ml-[380px] border-2 border-b-0 rounded-tl-lg rounded-tr-lg bg-yellow-50">
-        {projectName && (
+        {projectName ? (
           <div className="text-xl font-bold border bg-orange-200 p-2 rounded w-64 text-center flex gap-4 justify-center">
             {projectName}
             {isLeader && (
@@ -159,7 +159,42 @@ export default function WBSBoard({
               </button>
             )}
           </div>
+        ) : (
+          <div className="text-gray-500">Create or select a project to view WBS</div>
         )}
+
+        <div className="absolute top-4 right-4">
+          <div className="relative group">
+            <button
+              className="bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-700 hover:bg-gray-400 focus:outline-none"
+              title="How to use WBS Board"
+            >
+              ?
+            </button>
+            <div className="hidden group-hover:block absolute right-0 mt-2 w-80 bg-white border border-gray-300 rounded shadow-lg p-4 z-50 text-sm text-gray-700">
+              <strong>How to use WBS Board:</strong>
+              <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li>
+                  <span className="font-semibold">Add Modules/Submodules/Tasks:</span> Click the <span className="font-bold text-blue-600">+</span> button to add new modules.
+                  You can also add submodules and tasks within modules.
+                </li>
+                <li>
+                  <span className="font-semibold">Items:</span> Modules is <span className="text-green-400">green</span>, submodules are <span className="text-blue-300">light blue</span>, and tasks are <span className="text-gray-400">gray</span>.
+                </li>
+                <li>
+                  <span className="font-semibold">Select an item:</span> Click on a module, submodule, or task to view or edit its details.
+                </li>
+                <li>
+                  <span className="font-semibold">Edit/Delete:</span> Use the <span className="font-bold text-yellow-600">Edit</span> or <span className="font-bold text-red-600">Delete</span> buttons in the details panel.
+                </li>
+                <li>
+                  <span className="font-semibold">Assign Members:</span> For tasks, click the member icon to assign or change the responsible member.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div className="flex flex-1 overflow-hidden">
@@ -172,9 +207,8 @@ export default function WBSBoard({
               <>
                 {details?.member ? (
                   <div
-                    className={`flex items-center gap-2 text-white ${
-                      isLeader ? "cursor-pointer" : ""
-                    }`}
+                    className={`flex items-center gap-2 text-white ${isLeader ? "cursor-pointer" : ""
+                      }`}
                     onClick={() => {
                       if (isLeader) assignMember();
                     }}
@@ -329,7 +363,7 @@ export default function WBSBoard({
             {modules.map((mod) => (
               <div key={mod._id} className="relative w-60">
                 <div
-                  className="bg-green-100 border rounded p-3 shadow text-center cursor-pointer hover:bg-green-200 mb-4"
+                  className="bg-green-300 border rounded p-3 shadow text-center cursor-pointer hover:bg-green-400 mb-4"
                   onClick={() =>
                     selectItem({
                       type: "module",
@@ -345,7 +379,7 @@ export default function WBSBoard({
                   <div className="ml-4 border-l-2 border-gray-400 space-y-2 relative">
                     {mod.tasks.map((task) => (
                       <div
-                        key={task.id}
+                        key={task._id}
                         className="bg-gray-100 p-2 pl-0 rounded cursor-pointer hover:bg-gray-200 flex items-center text-sx"
                         onClick={() =>
                           selectItem({
@@ -366,7 +400,7 @@ export default function WBSBoard({
                   <div className="ml-4 border-l-2 border-blue-400  text-sx">
                     <div className="pt-2 space-y-2">
                       {mod.submodules.map((sub) => (
-                        <div key={sub.id} className="relative">
+                        <div key={sub._id} className="relative">
                           <div
                             className="bg-blue-100 p-2 pl-0 rounded cursor-pointer hover:bg-blue-200 flex items-center"
                             onClick={() =>
@@ -385,7 +419,7 @@ export default function WBSBoard({
                             <div className="mt-2 ml-4 space-y-1 border-l-2 border-gray-400">
                               {sub.tasks.map((task) => (
                                 <div
-                                  key={task.id}
+                                  key={task._id}
                                   className="bg-gray-100 p-2 pl-0 rounded cursor-pointer hover:bg-gray-200 flex items-center"
                                   onClick={() =>
                                     selectItem({

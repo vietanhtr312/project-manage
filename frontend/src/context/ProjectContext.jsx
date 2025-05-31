@@ -442,15 +442,17 @@ export const ProjectContextProvider = (props) => {
   };
 
   const getProjectMembers = async () => {
-    try {
-      const response = await wbsApi.getProjectMembers(projectId);
-      if (response.data.success) {
-        return response.data.data;
-      } else {
-        console.error("Error fetching project members:", response.statusText);
+    if (projectId) {
+      try {
+        const response = await wbsApi.getProjectMembers(projectId);
+        if (response.data.success) {
+          return response.data.data;
+        } else {
+          console.error("Error fetching project members:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching project members:", error);
       }
-    } catch (error) {
-      console.error("Error fetching project members:", error);
     }
   };
 

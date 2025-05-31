@@ -97,16 +97,16 @@ const Header = ({ display, setDisplay }) => {
         <SlidersHorizontal size={22} color="white" />
       </div>
       <div className="flex items-center space-x-4 mr-10">
-        <div className="relative">
+        <div className="relative"  onClick={() => setShowNotifications(!showNotifications)}>
           <Bell
             size={20}
             color="white"
             className="mr-10 cursor-pointer"
-            onClick={() => setShowNotifications(!showNotifications)}
+           
             id="notification-bell"
           />
           {newNotificationCount > 0 && (
-            <span className="absolute -top-2 right-8 bg-red-500 text-white text-xs rounded-full px-1 py-0.5 min-w-[18px] text-center">
+            <span className="absolute -top-2 right-8 bg-red-500 text-white text-xs rounded-full p-0.5 min-w-[18px] text-center cursor-pointer">
               {newNotificationCount}
             </span>
           )}
@@ -134,7 +134,7 @@ const Header = ({ display, setDisplay }) => {
                   >
                     <span>{notification.message}</span>
                     {!notification.isRead && (
-                      <span className="ml-1 w-2 h-2 rounded-full bg-red-500 inline-block"></span>
+                      <span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
                     )}
                   </div>
                 ))

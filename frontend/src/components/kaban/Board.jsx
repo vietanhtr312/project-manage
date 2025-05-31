@@ -17,10 +17,10 @@ export const Board = ({ viewMode = "all", userId }) => {
     if (!projectId) return;
     try {
       let response;
-      if (viewMode === "me") {
-        response = await kabanApi.getTasksByUserAndProject(userId, projectId);
-      } else {
+      if (viewMode === "all") {
         response = await kabanApi.getTasksByProjectId(projectId);
+      } else {
+        response = await kabanApi.getTasksByUserAndProject(userId, projectId);
       }
 
       if (response.data.success) {

@@ -4,6 +4,7 @@ import { Progress } from "antd";
 import TaskEditPopup from "./TaskEditPopup";
 import kabanApi from "../../api/kabanApi";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 export const TaskCard = ({ task, fetchTasks }) => {
   const [showEditPopup, setShowEditPopup] = useState(false);
@@ -38,11 +39,16 @@ export const TaskCard = ({ task, fetchTasks }) => {
     setIsSeeDetail(true);
   }
 
+  const isNew = moment().diff(moment(currentTask?.createdAt), "days") < 1;
+
   return (
     <div className="bg-white p-2 shadow-sm rounded-lg flex flex-col gap-3">
-      <h4 className="font-bold text-xs text-blue-900 mr-auto">
-        {currentTask?.name}
-      </h4>
+      <div className="flex justify-between items-center">
+        <h4 className="font-bold text-xs text-blue-900 mr-auto">
+          {currentTask?.name}
+        </h4>
+        {isNew && <span className="text-xs text-red-500">new</span>}
+      </div>
       <div className="">
         <Progress
           percent={currentTask?.progress}
@@ -67,7 +73,7 @@ export const TaskCard = ({ task, fetchTasks }) => {
       {showEditPopup && (
         <TaskEditPopup
           task={currentTask}
-          onClose={() => {setShowEditPopup(false); setIsSeeDetail(false);}}
+          onClose={() => { setShowEditPopup(false); setIsSeeDetail(false); }}
           onSave={handleUpdateTask}
           isSeeDetail={isSeeDetail}
         />

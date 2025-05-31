@@ -108,7 +108,7 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
               value={formData.status}
               onChange={handleChange}
               disabled={isSeeDetail}
-              className={"w-full border px-3 py-2 rounded"}
+              className={`w-full border px-3 py-2 rounded ${isSeeDetail && "custom_select"}`}
             >
               <option value="to-do">To Do</option>
               <option value="in-progress">In Progress</option>
