@@ -1,26 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { ChevronRight } from "lucide-react";
-import { useContext } from "react";
-import { ProjectContext } from "../../context/ProjectContext";
-import useUserStore from "../../store/userStore";
+
 const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
-  const user = useUserStore((state) => state.user);
-  const { projectStructure, getTaskById } = useContext(ProjectContext);
-  const isLeader = projectStructure.leader === user.id;
-  const [member, setMember] = useState(null);
-
-  const fetchTaskDetails = async () => {
-    try {
-      const res = await getTaskById(task._id);
-      setMember(res.member);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  useEffect(() => {
-    fetchTaskDetails();
-  }, [task._id]);
-
   const formatDate = (date) => {
     if (!date) return "";
     const d = new Date(date);
@@ -63,7 +43,6 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
           <h2 className="text-xl font-bold text-blue-900 mb-4">
             {task?.name || "New Task"}
           </h2>
-          {member && member.name}
         </div>
 
         <div className="text-blue-800 font-medium flex items-center">
@@ -77,13 +56,11 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
             <label className="block mb-1 font-medium">Details:</label>
             <textarea
               name="description"
-              disabled={member?._id !== user.id}
               value={formData.description}
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
               rows="3"
               placeholder="// To do"
-              readOnly={isSeeDetail}
             />
           </div>
 
@@ -95,7 +72,6 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
               value={formData.progress}
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
-              readOnly={isSeeDetail}
               min="0"
               max="100"
             />
@@ -107,8 +83,9 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
               name="status"
               value={formData.status}
               onChange={handleChange}
-              disabled={isSeeDetail}
-              className={`w-full border px-3 py-2 rounded ${isSeeDetail && "custom_select"}`}
+              className={`w-full border px-3 py-2 rounded ${
+                isSeeDetail && "custom_select"
+              }`}
             >
               <option value="to-do">To Do</option>
               <option value="in-progress">In Progress</option>

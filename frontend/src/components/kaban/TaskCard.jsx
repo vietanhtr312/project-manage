@@ -5,12 +5,30 @@ import TaskEditPopup from "./TaskEditPopup";
 import kabanApi from "../../api/kabanApi";
 import { toast } from "react-toastify";
 import moment from "moment";
-
+import useUserStore from "../../store/userStore";
+import { useEffect } from "react";
+import { useContext } from "react";
+import { ProjectContext } from "../../context/ProjectContext";
 export const TaskCard = ({ task, fetchTasks }) => {
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [currentTask, setCurrentTask] = useState(task);
   const [isSeeDetail, setIsSeeDetail] = useState(false);
+  const user = useUserStore((state) => state.user);
+  const { projectStructure, getTaskById } = useContext(ProjectContext);
 
+  const [member, setMember] = useState(null);
+
+  const fetchTaskDetails = async () => {
+    try {
+      const res = await getTaskById(task._id);
+      setMember(res.member);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    fetchTaskDetails();
+  }, [task._id]);
   const getColor = () => {
     if (currentTask?.progress >= 100) return "#52c41a";
     if (currentTask?.progress < 30) return "#ff4d4f";
@@ -35,9 +53,9 @@ export const TaskCard = ({ task, fetchTasks }) => {
   };
 
   const handleSeeDetails = () => {
-    setShowEditPopup(true)
+    setShowEditPopup(true);
     setIsSeeDetail(true);
-  }
+  };
 
   const isNew = moment().diff(moment(currentTask?.createdAt), "days") < 1;
 
@@ -63,17 +81,22 @@ export const TaskCard = ({ task, fetchTasks }) => {
           size={14}
           onClick={handleSeeDetails}
         />
-        <PenLine
-          className="cursor-pointer hover:text-blue-500"
-          size={14}
-          onClick={handleEdit}
-        />
+        {member?._id === user.id && (
+          <PenLine
+            className="cursor-pointer hover:text-blue-500"
+            size={14}
+            onClick={handleEdit}
+          />
+        )}
       </div>
 
       {showEditPopup && (
         <TaskEditPopup
           task={currentTask}
-          onClose={() => { setShowEditPopup(false); setIsSeeDetail(false); }}
+          onClose={() => {
+            setShowEditPopup(false);
+            setIsSeeDetail(false);
+          }}
           onSave={handleUpdateTask}
           isSeeDetail={isSeeDetail}
         />
