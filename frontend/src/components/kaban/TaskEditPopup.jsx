@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-
+import { useContext } from "react";
+import { ProjectContext } from "../../context/ProjectContext";
 const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
+  const { projectStructure, getTaskById } = useContext(ProjectContext);
   const formatDate = (date) => {
     if (!date) return "";
     const d = new Date(date);
@@ -30,6 +32,20 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
     }
   };
 
+  const [member, setMember] = useState(null);
+
+  const fetchTaskDetails = async () => {
+    try {
+      const res = await getTaskById(task._id);
+      setMember(res.member);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    fetchTaskDetails();
+  }, [task._id]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(formData);
@@ -43,6 +59,7 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
           <h2 className="text-xl font-bold text-blue-900 mb-4">
             {task?.name || "New Task"}
           </h2>
+          {member && member.name}
         </div>
 
         <div className="text-blue-800 font-medium flex items-center">
@@ -58,6 +75,7 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
               name="description"
               value={formData.description}
               onChange={handleChange}
+              disabled={isSeeDetail}
               className="w-full border px-3 py-2 rounded"
               rows="3"
               placeholder="// To do"
@@ -72,6 +90,7 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
               value={formData.progress}
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
+              disabled={isSeeDetail}
               min="0"
               max="100"
             />
@@ -86,6 +105,7 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
               className={`w-full border px-3 py-2 rounded ${
                 isSeeDetail && "custom_select"
               }`}
+              disabled={isSeeDetail}
             >
               <option value="to-do">To Do</option>
               <option value="in-progress">In Progress</option>
