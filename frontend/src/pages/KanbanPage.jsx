@@ -6,14 +6,14 @@ import useUserStore from "../store/userStore";
 export const KanbanPage = () => {
   const { projectStructure, getProjectMembers } = useContext(ProjectContext);
   const user = useUserStore((state) => state.user);
-  const [viewMode, setViewMode] = useState("all"); 
+  const [viewMode, setViewMode] = useState("all");
   const [members, setMembers] = useState([]);
 
   useEffect(() => {
     const fetchMembers = async () => {
       try {
         const members = await getProjectMembers();
-        setMembers(members.members);
+        setMembers(members?.members);
       } catch (error) {
         console.error("Error fetching members:", error);
       }
