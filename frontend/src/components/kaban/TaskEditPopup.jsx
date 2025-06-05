@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-
+import { useContext } from "react";
+import { ProjectContext } from "../../context/ProjectContext";
 const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
+  const { projectStructure, getTaskById } = useContext(ProjectContext);
   const formatDate = (date) => {
     if (!date) return "";
     const d = new Date(date);
@@ -30,6 +32,20 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
     }
   };
 
+  const [member, setMember] = useState(null);
+
+  const fetchTaskDetails = async () => {
+    try {
+      const res = await getTaskById(task._id);
+      setMember(res.member);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    fetchTaskDetails();
+  }, [task._id]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(formData);
@@ -43,6 +59,7 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
           <h2 className="text-xl font-bold text-blue-900 mb-4">
             {task?.name || "New Task"}
           </h2>
+          {member && member.name}
         </div>
 
         <div className="text-blue-800 font-medium flex items-center">
