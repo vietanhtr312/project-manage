@@ -16,7 +16,7 @@ function App() {
       <ToastContainer />
       <Router>
         <Routes>
-          <Route element={<RequireAuth><MainLayout /></RequireAuth>}>
+          <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route element={<ProjectManagerLayout />}>
               <Route path="/kaban" element={<KanbanPage />} />
