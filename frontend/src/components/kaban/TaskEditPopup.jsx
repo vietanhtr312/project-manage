@@ -58,6 +58,7 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
               name="description"
               value={formData.description}
               onChange={handleChange}
+              disabled={isSeeDetail}
               className="w-full border px-3 py-2 rounded"
               rows="3"
               placeholder="// To do"
@@ -72,6 +73,7 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
               value={formData.progress}
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
+              disabled={isSeeDetail}
               min="0"
               max="100"
             />
@@ -86,6 +88,7 @@ const TaskEditPopup = ({ task, onClose, onSave, isSeeDetail }) => {
               className={`w-full border px-3 py-2 rounded ${
                 isSeeDetail && "custom_select"
               }`}
+              disabled={isSeeDetail}
             >
               <option value="to-do">To Do</option>
               <option value="in-progress">In Progress</option>
